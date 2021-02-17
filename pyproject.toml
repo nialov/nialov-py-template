@@ -1,0 +1,17 @@
+[tool.pytest.ini_options]
+testpaths =[
+    "tests",
+    "[[ package ]]",
+    ]
+addopts = "--doctest-modules --pdbcls=IPython.terminal.debugger:Pdb"
+doctest_optionflags =[
+    "NUMBER",
+    "NORMALIZE_WHITESPACE",
+    ]
+
+filterwarnings =[]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = ["[[ package ]]", "tests"]
