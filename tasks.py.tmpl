@@ -44,6 +44,7 @@ def nox_parallel(c):
     Run selected nox test suite sessions in parallel.
     """
     # Run asynchronously and collect promises
+    print(f"Running {len(nox_parallel_sessions)} nox test sessions.")
     promises = [
         c.run(
             f"nox --session {nox_test} --no-color",
@@ -99,3 +100,5 @@ def make(_):
     """
     Make all.
     """
+    print("---------------")
+    print("make succesful.")
