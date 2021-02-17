@@ -1,8 +1,6 @@
 """
 Invoke tasks.
 """
-from pathlib import Path
-
 from invoke import task
 
 nox_parallel_sessions = (

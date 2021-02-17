@@ -1,10 +1,10 @@
 """
 Nox test suite.
 """
-from typing import List
+import logging
 from pathlib import Path
 from shutil import copy2, copytree, rmtree
-import logging
+from typing import List
 
 import nox
 
@@ -46,10 +46,7 @@ def tests_strict(session: nox.Session):
             logging.error(f"Expected {to_copy} to exist.")
     session.chdir(tmp_dir)
     session.install("pipenv")
-    try:
-        session.run("pipenv", "--rm")
-    except:
-        pass
+    session.run("pipenv", "--rm", success_codes=[0, 1])
     session.run(
         "pipenv",
         "sync",
@@ -158,7 +155,6 @@ def docs(session):
 
     Installation mimics readthedocs install.
     """
-
     # Install with setup.py[dev] installation
     session.install(".[dev]")
 
