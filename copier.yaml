@@ -1,0 +1,3 @@
+package:
+  type: str
+  help: Your python package name
