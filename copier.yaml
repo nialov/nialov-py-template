@@ -10,3 +10,31 @@ full_name:
   type: str
   help: Your full name
   default: Nikolas Ovaskainen
+
+description:
+  type: str
+  help: Short package description
+  default: Python package for stuff.
+
+github_account:
+  type: str
+  help: GitHub account name
+  default: nialov
+
+email:
+  type: str
+  help: Displayed email address
+  default: nikolasovaskainen@gmail.com
+
+broad_topic:
+  type: str
+  default: Data Analysis
+
+narrow_topic:
+  type: str
+  default: Spatial Analysis
+
+keywords:
+  type: str
+  help: Keywords, space separated
+  default: data analysis spatial geology
