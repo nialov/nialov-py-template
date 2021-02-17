@@ -73,7 +73,7 @@ def pytest(c):
     Much faster than full `test` suite.
     """
     c.run(f"coverage run --include '{package_name}/**.py' -m pytest")
-    c.run("coverage run coverage report --fail-under 70")
+    c.run("coverage report --fail-under 70")
 
 
 @task(pre=[pytest, nox_parallel])
