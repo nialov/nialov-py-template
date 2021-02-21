@@ -4,7 +4,7 @@ Nox session tests for template.
 import nox
 from pathlib import Path
 
-template_url = "https://github.com/nialov/nialov-py-template"
+# template_url = "https://github.com/nialov/nialov-py-template"
 scaffold_url = "https://github.com/nialov/nialov-py-template-test"
 
 scaffold_dir = "nialov-py-template-test"
