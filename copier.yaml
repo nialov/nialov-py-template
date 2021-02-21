@@ -1,3 +1,10 @@
+_exclude:
+  - "*.bar"
+  - ".git"
+  - "Pipfile.lock"
+  - "tasks.py"
+  - "noxfile.py"
+
 year:
   type: int
   help: Start-up year of project

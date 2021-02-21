@@ -99,7 +99,7 @@ def format(session):
     )
     # Format notebooks
     for notebook in all_notebooks:
-        session.run("black-nb", notebook)
+        session.run("black-nb", str(notebook))
 
 
 @nox.session(python="3.8")
