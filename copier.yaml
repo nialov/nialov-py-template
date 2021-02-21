@@ -2,8 +2,8 @@ _exclude:
   - "*.bar"
   - ".git"
   - "Pipfile.lock"
-  - "tasks.py"
-  - "noxfile.py"
+  - "devtasks.py"
+  - "devnoxfile.py"
 
 year:
   type: int
