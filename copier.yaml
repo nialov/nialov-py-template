@@ -4,6 +4,13 @@ _exclude:
   - "Pipfile.lock"
   - "devtasks.py"
   - "devnoxfile.py"
+  - "copier.yaml"
+  - "copier.yml"
+  - "~*"
+  - "*.py[co]"
+  - "__pycache__"
+  - ".DS_Store"
+  - ".svn"
 
 year:
   type: int
