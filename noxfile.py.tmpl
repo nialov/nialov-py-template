@@ -136,7 +136,7 @@ def lint(session):
 
     for notebook in all_notebooks:
         # Lint notebooks with black-nb (all should be formatted.)
-        session.run("black-nb", "--check", notebook)
+        session.run("black-nb", "--check", str(notebook))
 
 
 @nox.session
