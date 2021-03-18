@@ -12,7 +12,7 @@ _exclude:
   - ".DS_Store"
   - ".svn"
   - ".github/workflows/test-template.yml"
-  - "README.rst"
+  - "README.md"
 
 year:
   type: int
