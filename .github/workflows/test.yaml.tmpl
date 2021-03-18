@@ -1,10 +1,10 @@
-name: Pytest
+name: Tests
 
 on: [push, pull_request]
 
 jobs:
   # Lint
-  lint-files:
+  pytest:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 2
