@@ -1,10 +1,10 @@
-name: Tests
+name: test
 
 on: [push, pull_request]
 
 jobs:
-  # Lint
-  pytest:
+  # Test
+  pytest-and-coverage:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 2

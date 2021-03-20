@@ -7,8 +7,8 @@ from invoke import task
 from invoke import UnexpectedExit
 
 nox_parallel_sessions = (
-    "tests_strict",
-    "tests_lazy",
+    "tests_pipenv",
+    "tests_pip",
 )
 
 package_name = "[[ package ]]"
@@ -70,22 +70,13 @@ def nox_parallel(c):
 def ci_test(c):
     """
     Test suite for continous integration testing.
+
+    Installs with pip, tests with pytest and checks coverage with coverage.
     """
-    c.run("nox --session tests_lazy")
+    c.run("nox --session tests_pip")
 
 
-@task
-def pytest(c):
-    """
-    Run tests with pytest in currently installed environment.
-
-    Much faster than full `test` suite.
-    """
-    c.run(f"coverage run --include '{package_name}/**.py' -m pytest")
-    c.run("coverage report --fail-under 70")
-
-
-@task(pre=[requirements, pytest, nox_parallel])
+@task(pre=[requirements, nox_parallel])
 def test(_):
     """
     Run tests.
