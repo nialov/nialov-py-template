@@ -80,15 +80,15 @@ def tests_pip(session):
     session.install(".[dev,coverage]")
 
     # Test with pytest and determine coverage
-    session.run(
-        "coverage", "run", "--include", f"'{package_name}/**.py'", "-m", "pytest"
-    )
+    session.run("coverage", "run", "--source", package_name, "-m", "pytest")
     session.run("coverage", "report", "--fail-under", "70")
 
     # Make coverage-badge image
     if coverage_svg_path.exists():
         coverage_svg_path.unlink()
-    session.run(f"coverage-badge", "-o", str(coverage_svg_path))
+    elif not coverage_svg_path.parent.exists():
+        coverage_svg_path.parent.mkdir(parents=True)
+    session.run("coverage-badge", "-o", str(coverage_svg_path))
 
 
 @nox.session(python="3.8")
