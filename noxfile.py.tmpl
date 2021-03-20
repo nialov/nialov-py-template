@@ -80,7 +80,9 @@ def tests_pip(session):
     session.install(".[dev,coverage]")
 
     # Test with pytest and determine coverage
-    session.run(f"coverage run --include '{package_name}/**.py' -m pytest")
+    session.run(
+        "coverage", "run", "--include", f"'{package_name}/**.py'", "-m", "pytest"
+    )
     session.run("coverage", "report", "--fail-under", "70")
 
     # Make coverage-badge image
