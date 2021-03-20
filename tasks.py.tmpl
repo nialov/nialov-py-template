@@ -38,7 +38,7 @@ def lint(c):
     c.run("nox --session lint")
 
 
-@task
+@task(pre=[requirements])
 def nox_parallel(c):
     """
     Run selected nox test suite sessions in parallel.
@@ -66,7 +66,7 @@ def nox_parallel(c):
     print(f"{len(results)} nox sessions ran succesfully.")
 
 
-@task
+@task(pre=[requirements])
 def ci_test(c):
     """
     Test suite for continous integration testing.
@@ -76,7 +76,7 @@ def ci_test(c):
     c.run("nox --session tests_pip")
 
 
-@task(pre=[requirements, nox_parallel])
+@task(pre=[nox_parallel])
 def test(_):
     """
     Run tests.
@@ -94,7 +94,7 @@ def docs(c):
     c.run("nox --session docs")
 
 
-@task(pre=[test, lint, docs])
+@task(pre=[requirements, test, lint, docs])
 def make(_):
     """
     Make all.

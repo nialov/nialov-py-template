@@ -108,7 +108,6 @@ def format(session):
     """
     Format Python files, notebooks and docs_src.
     """
-
     # Install only format dependencies
     session.install("black", "black-nb", "isort")
     existing_paths = filter_paths_to_existing(
