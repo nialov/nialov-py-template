@@ -83,10 +83,8 @@ def tests_pip(session):
     # Test with pytest and determine coverage
     session.run("coverage", "run", "--source", package_name, "-m", "pytest")
 
-    # Coverage failing is fine when testing the copier template itself
-
-    fail_percent = "70" if os.environ.get("COPIER_TEMPLATE_TEST") is None else "0"
-    session.run("coverage", "report", "--fail-under", fail_percent)
+    # Fails with test coverage under 70
+    session.run("coverage", "report", "--fail-under", "70")
 
     # Make coverage-badge image
     if coverage_svg_path.exists():

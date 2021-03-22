@@ -3,14 +3,11 @@ Nox session tests for template.
 """
 import nox
 from pathlib import Path
-import os
 
 # template_url = "https://github.com/nialov/nialov-py-template"
 scaffold_url = "https://github.com/nialov/nialov-py-template-test"
 
 scaffold_dir = "nialov-py-template-test"
-
-testing_env_variable = "COPIER_TEMPLATE_TEST"
 
 
 @nox.session
@@ -18,9 +15,6 @@ def test(session: nox.Session):
     """
     Test template with nox session.
     """
-    # Set template testing env variable
-    os.environ[testing_env_variable] = "True"
-
     # Save current dir to variable
     current_dir = Path(".").resolve()
 
