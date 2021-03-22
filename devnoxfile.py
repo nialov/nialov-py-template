@@ -42,6 +42,9 @@ def test(session: nox.Session):
     # Install with pipenv
     session.run("pipenv", "install", "--dev")
 
+    # Update the local setup.py file
+    session.run("pipenv", "run", "invoke", "requirements")
+
     # Run versioneer
     session.run("versioneer", "install")
 
