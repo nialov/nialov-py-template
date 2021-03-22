@@ -85,11 +85,7 @@ def tests_pip(session):
 
     # Coverage failing is fine when testing the copier template itself
 
-    fail_percent = (
-        "70"
-        if os.environ.get("COPIER_TEMPLATE") is None
-        else os.environ.get("COPIER_TEMPLATE")
-    )
+    fail_percent = "70" if os.environ.get("COPIER_TEMPLATE_TEST") is None else "0"
     session.run("coverage", "report", "--fail-under", fail_percent)
 
     # Make coverage-badge image
