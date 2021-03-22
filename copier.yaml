@@ -42,13 +42,10 @@ email:
   help: Displayed email address
   default: nikolasovaskainen@gmail.com
 
-broad_topic:
+classifier:
   type: str
-  default: Data Analysis
-
-narrow_topic:
-  type: str
-  default: Spatial Analysis
+  help: See https://pypi.org/classifiers/
+  default: "Topic :: Scientific/Engineering :: GIS"
 
 keywords:
   type: str
