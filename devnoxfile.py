@@ -50,3 +50,7 @@ def test(session: nox.Session):
 
     # Run tests that come from copier template files
     session.run("pipenv", "run", "invoke", "make")
+
+    # Make sure versioneer files are not documented
+    if Path("docs_src/mypackage._version.rst").exists():
+        raise FileExistsError("Expected no apidoc on _version.py file.")
