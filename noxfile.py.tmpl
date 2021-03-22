@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 from shutil import copy2, copytree, rmtree
 from typing import List
+import os
 
 import nox
 
@@ -81,7 +82,15 @@ def tests_pip(session):
 
     # Test with pytest and determine coverage
     session.run("coverage", "run", "--source", package_name, "-m", "pytest")
-    session.run("coverage", "report", "--fail-under", "70")
+
+    # Coverage failing is fine when testing the copier template itself
+
+    fail_percent = (
+        "70"
+        if os.environ.get("COPIER_TEMPLATE") is None
+        else os.environ.get("COPIER_TEMPLATE")
+    )
+    session.run("coverage", "report", "--fail-under", fail_percent)
 
     # Make coverage-badge image
     if coverage_svg_path.exists():
