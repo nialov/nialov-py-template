@@ -18,7 +18,7 @@ from io import open
 
 # Use versioneer to bump version numbers
 # requires `versioneer install`
-import versioneer
+import versioneer  # type: ignore
 
 here = path.abspath(path.dirname(__file__))
 
@@ -46,7 +46,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name=package_name,  # Required
+    name=package_name.replace("_", "-"),  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #

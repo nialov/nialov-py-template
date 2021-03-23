@@ -20,7 +20,7 @@ year:
 
 package:
   type: str
-  help: Your python package name
+  help: Your python package name. Do not include hyphens. Underscores allowed.
 
 full_name:
   type: str
