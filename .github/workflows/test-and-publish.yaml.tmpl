@@ -1,6 +1,12 @@
 name: test-and-publish
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "41 7 * * 5"
 
 jobs:
   # Test
