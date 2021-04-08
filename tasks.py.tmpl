@@ -94,10 +94,18 @@ def docs(c):
     c.run("nox --session docs")
 
 
-@task(pre=[requirements, test, lint, docs])
+@task(pre=[requirements, format])
+def notebooks(c):
+    """
+    Execute and fill notebooks.
+    """
+    c.run("nox --session notebooks")
+
+
+@task(pre=[requirements, test, lint, docs, notebooks])
 def make(_):
     """
     Make all.
     """
     print("---------------")
-    print("make succesful.")
+    print("make successful.")

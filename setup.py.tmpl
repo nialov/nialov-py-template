@@ -16,6 +16,10 @@ from os import path
 # Python 3 only projects can skip this import
 from io import open
 
+# Use versioneer to bump version numbers
+# requires `versioneer install`
+import versioneer  # type: ignore
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -42,14 +46,16 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name=package_name,  # Required
+    name=package_name.replace("_", "-"),  # Required
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
     #
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version="0.0.0",  # Required
+    # --- Versioneer setup ---
+    version=versioneer.get_version(),  # Required
+    cmdclass=versioneer.get_cmdclass(),
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
@@ -96,7 +102,7 @@ setup(
         "Development Status :: 3 - Alpha",
         # Indicate who your project is intended for
         "Intended Audience :: Developers",
-        "Topic :: [[ broad_topic ]] :: [[ narrow_topic ]]",
+        "[[ classifier ]]",
         # Pick your license as you wish
         # "License :: OSI Approved :: MIT License",
         # Specify the Python versions you support here. In particular, ensure

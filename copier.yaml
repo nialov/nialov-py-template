@@ -20,7 +20,7 @@ year:
 
 package:
   type: str
-  help: Your python package name
+  help: Your python package name. Do not include hyphens. Underscores allowed.
 
 full_name:
   type: str
@@ -42,13 +42,10 @@ email:
   help: Displayed email address
   default: nikolasovaskainen@gmail.com
 
-broad_topic:
+classifier:
   type: str
-  default: Data Analysis
-
-narrow_topic:
-  type: str
-  default: Spatial Analysis
+  help: See https://pypi.org/classifiers/
+  default: "Topic :: Scientific/Engineering :: GIS"
 
 keywords:
   type: str
