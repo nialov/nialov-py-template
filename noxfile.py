@@ -30,7 +30,7 @@ def test(session: nox.Session):
     session.chdir(tmp_dir)
 
     # Copy test_template dir to temp dir
-    copytree(template_dir, ".")
+    copytree(template_dir, template_dir_name)
 
     # Change to test_template dir in the cloned dir
     session.chdir(template_dir_name)
