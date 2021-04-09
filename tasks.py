@@ -9,4 +9,4 @@ def test(c):
     """
     Test template with scaffold Python project.
     """
-    c.run("nox -f devnoxfile.py --session test")
+    c.run("nox --session test")

@@ -29,7 +29,7 @@ def test(session: nox.Session):
     # git clone scaffold Python 3.8 project
     session.run("git", "clone", template_url, "--depth", "1", external=True)
 
-    # Change to the cloned dir
+    # Change to test_template dir in the cloned dir
     session.chdir(template_dir)
 
     # Run copier
