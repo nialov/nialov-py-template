@@ -1,0 +1,61 @@
+name: test-and-publish
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "41 7 * * 5"
+
+jobs:
+  # Test
+  pytest-coverage-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nox invoke
+      - name: Test with invoke -> nox -> pytest
+        run: invoke ci-test
+      - name: Lint with invoke -> nox -> linters
+        run: invoke lint
+
+  build-and-publish:
+    needs: pytest-coverage-lint
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    # Pushes to PyPI on tagged commit pushes of master branch
+    # Additionally tests building with setuptools on all branches
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install setuptools, wheel, invoke and nox
+        run: >-
+          python -m pip install setuptools wheel invoke nox
+      - name: Update requirements with nox session
+        run: >-
+          invoke requirements
+      - name: Build binary wheel and a source tarball
+        run: >-
+          python setup.py sdist bdist_wheel
+      - name: Publish distribution 📦 to PyPI on tagged commit pushes
+        # Publish to PyPI on tagged commit pushes on master
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}

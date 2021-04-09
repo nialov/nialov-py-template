@@ -1,0 +1,11 @@
+docs
+.coverage
+.mypy_cache
+.ipynb_checkpoints/
+dev/
+*.egg-info
+.nox
+**/__pycache__
+.hypothesis
+.vim
+.esri.gz
