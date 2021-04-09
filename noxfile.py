@@ -3,10 +3,10 @@ Nox session tests for template.
 """
 import nox
 from pathlib import Path
+from shutil import copytree
 
-template_url = "https://github.com/nialov/nialov-py-template"
 
-template_dir = "nialov-py-template/test_template"
+template_dir_name = "test_template"
 
 
 @nox.session
@@ -14,8 +14,14 @@ def test(session: nox.Session):
     """
     Test template with nox session.
     """
+    # Install dependencies
+    session.install("pipenv", "copier", "versioneer")
+
     # Save current dir to variable
     current_dir = Path(".").resolve()
+
+    # Resolve test_template dir
+    template_dir = current_dir / template_dir_name
 
     # Create temporary directory
     tmp_dir = session.create_tmp()
@@ -23,19 +29,16 @@ def test(session: nox.Session):
     # Change to the temporary directory
     session.chdir(tmp_dir)
 
-    # Install dependencies
-    session.install("pipenv", "copier", "versioneer")
-
-    # git clone scaffold Python 3.8 project
-    session.run("git", "clone", template_url, "--depth", "1", external=True)
+    # Copy test_template dir to temp dir
+    copytree(template_dir, ".")
 
     # Change to test_template dir in the cloned dir
-    session.chdir(template_dir)
+    session.chdir(template_dir_name)
 
     # Run copier
     session.run("copier", "--force", "copy", str(current_dir), ".")
 
-    # Rm any existing pipenv
+    # rm any existing pipenv
     session.run("pipenv", "--rm", success_codes=[0, 1])
 
     # Install with pipenv
