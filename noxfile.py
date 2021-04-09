@@ -4,10 +4,9 @@ Nox session tests for template.
 import nox
 from pathlib import Path
 
-# template_url = "https://github.com/nialov/nialov-py-template"
-scaffold_url = "https://github.com/nialov/nialov-py-template-test"
+template_url = "https://github.com/nialov/nialov-py-template"
 
-scaffold_dir = "nialov-py-template-test"
+template_dir = "nialov-py-template/test_template"
 
 
 @nox.session
@@ -28,10 +27,10 @@ def test(session: nox.Session):
     session.install("pipenv", "copier", "versioneer")
 
     # git clone scaffold Python 3.8 project
-    session.run("git", "clone", scaffold_url, "--depth", "1", external=True)
+    session.run("git", "clone", template_url, "--depth", "1", external=True)
 
     # Change to the cloned dir
-    session.chdir(scaffold_dir)
+    session.chdir(template_dir)
 
     # Run copier
     session.run("copier", "--force", "copy", str(current_dir), ".")
