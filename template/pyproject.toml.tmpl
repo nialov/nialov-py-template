@@ -63,5 +63,10 @@ multi_line_output = 3
 src_paths = ["[[ package ]]", "tests"]
 
 [tool.pylint]
+fail-under = 10
+
+[tool.pylint.format]
 max-line-length = 100
+
+[tool.pylint.report]
 output-format = "text"
