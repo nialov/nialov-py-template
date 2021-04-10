@@ -28,6 +28,14 @@ def lint(c):
 
 
 @task
+def requirements(c):
+    """
+    Sync requirements.
+    """
+    c.run("nox --session requirements")
+
+
+@task(pre=[requirements])
 def nox_parallel(c):
     """
     Run selected nox test suite sessions in parallel.
@@ -63,7 +71,7 @@ def update_version(c):
     c.run("nox --session update_version")
 
 
-@task(pre=[update_version])
+@task(pre=[requirements, update_version])
 def ci_test(c):
     """
     Test suite for continous integration testing.
@@ -73,7 +81,7 @@ def ci_test(c):
     c.run("nox --session tests_pip")
 
 
-@task(pre=[nox_parallel])
+@task(pre=[requirements, nox_parallel])
 def test(_):
     """
     Run tests.
@@ -83,7 +91,7 @@ def test(_):
     """
 
 
-@task(pre=[update_version])
+@task(pre=[requirements, update_version])
 def docs(c):
     """
     Make documentation to docs using nox.
@@ -91,7 +99,7 @@ def docs(c):
     c.run("nox --session docs")
 
 
-@task(pre=[format])
+@task(pre=[requirements, format])
 def notebooks(c):
     """
     Execute and fill notebooks.
