@@ -9,3 +9,7 @@ dev/
 .hypothesis
 .vim
 .esri.gz
+
+# We do not want to include requirements.txt
+# It is merely for backwards compatible pip installs
+requirements.txt
