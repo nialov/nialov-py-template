@@ -167,10 +167,19 @@ def requirements(session):
     session.install("poetry")
 
     # Sync dev requirements
-    session.run("poetry", "export", "--dev", "-o", dev_requirements)
+    session.run("poetry", "export", "--without-hashes", "--dev", "-o", dev_requirements)
 
     # Sync docs requirements
-    session.run("poetry", "export", "--dev", "-E", "docs", "-o", dev_requirements)
+    session.run(
+        "poetry",
+        "export",
+        "--without-hashes",
+        "--dev",
+        "-E",
+        "docs",
+        "-o",
+        dev_requirements,
+    )
 
 
 @nox.session
