@@ -6,17 +6,9 @@ Most tasks employ nox to create a virtual session for testing.
 from invoke import task
 from invoke import UnexpectedExit
 
-nox_parallel_sessions = ("tests_pip",)
+NOX_PARALLEL_SESSIONS = ("tests_pip",)
 
-package_name = "[[ package ]]"
-
-
-@task
-def format(c):
-    """
-    Format everything.
-    """
-    c.run("nox --session format")
+PACKAGE_NAME = "[[ package ]]"
 
 
 @task
@@ -27,7 +19,7 @@ def requirements(c):
     c.run("nox --session requirements")
 
 
-@task(pre=[format, requirements])
+@task(pre=[requirements])
 def lint(c):
     """
     Lint everything.
@@ -41,14 +33,14 @@ def nox_parallel(c):
     Run selected nox test suite sessions in parallel.
     """
     # Run asynchronously and collect promises
-    print(f"Running {len(nox_parallel_sessions)} nox test sessions.")
+    print(f"Running {len(NOX_PARALLEL_SESSIONS)} nox test sessions.")
     promises = [
         c.run(
             f"nox --session {nox_test} --no-color",
             asynchronous=True,
             timeout=360,
         )
-        for nox_test in nox_parallel_sessions
+        for nox_test in NOX_PARALLEL_SESSIONS
     ]
 
     # Join all promises
@@ -99,7 +91,7 @@ def docs(c):
     c.run("nox --session docs")
 
 
-@task(pre=[requirements, format])
+@task(pre=[requirements])
 def notebooks(c):
     """
     Execute and fill notebooks.
