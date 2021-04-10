@@ -6,11 +6,24 @@ authors = ["[[ github_account ]] <[[ email ]]>"]
 
 [tool.poetry.dependencies]
 python = "3.8"
+
+# Extras
+# Coverate
 coverage = {version = "*", optional = true}
 coverage-badge = {version = "*", optional = true}
+
+# Docs
 sphinx = {version = "*", optional = true}
 sphinx-rtd-theme = {version = "*", optional = true}
 nbsphinx = {version = "*", optional = true}
+
+# Linting and formatting
+pylint = {version = "*", optional = true}
+rstcheck = {version = "*", optional = true}
+sphinx = {version = "*", optional = true}
+black = {version = "*", optional = true}
+black-nb = {version = "*", optional = true}
+isort = {version = "*", optional = true}
 
 [tool.poetry.dev-dependencies]
 nox = "*"
@@ -22,6 +35,7 @@ pytest = "*"
 [tool.poetry.extras]
 coverage = ["coverage", "coverage-badge"]
 docs = ["sphinx", "sphinx-rtd-theme", "nbsphinx"]
+format-lint = ["pylint", "rstcheck", "sphinx", "black", "black-nb", "isort"] 
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
@@ -48,3 +62,7 @@ filterwarnings =[]
 profile = "black"
 multi_line_output = 3
 src_paths = ["[[ package ]]", "tests"]
+
+[tool.pylint]
+max-line-length = 100
+output-format = "text"

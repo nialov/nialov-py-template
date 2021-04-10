@@ -19,20 +19,20 @@ def format(c):
     c.run("nox --session format")
 
 
-@task(pre=[format])
-def lint(c):
-    """
-    Lint everything.
-    """
-    c.run("nox --session lint")
-
-
 @task
 def requirements(c):
     """
     Sync requirements.
     """
     c.run("nox --session requirements")
+
+
+@task(pre=[format, requirements])
+def lint(c):
+    """
+    Lint everything.
+    """
+    c.run("nox --session lint")
 
 
 @task(pre=[requirements])
