@@ -15,7 +15,7 @@ def test(session: nox.Session):
     Test template with nox session.
     """
     # Install dependencies
-    session.install("pipenv", "copier", "versioneer")
+    session.install("poetry", "copier")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
@@ -38,21 +38,17 @@ def test(session: nox.Session):
     # Run copier
     session.run("copier", "--force", "copy", str(current_dir), ".")
 
-    # rm any existing pipenv
-    session.run("pipenv", "--rm", success_codes=[0, 1])
+    # rm any existing poetry venv
+    session.run("poetry", "env", "remove", "python", success_codes=[0, 1])
 
-    # Install with pipenv
-    session.run("pipenv", "install", "--dev")
+    # Install with poetry
+    session.run("poetry", "install")
 
-    # Update the local setup.py file
-    session.run("pipenv", "run", "invoke", "requirements")
+    # Update the local pyproject.toml file version
+    session.run("poetry", "run", "invoke", "update-version")
 
-    # Run versioneer
-    session.run("versioneer", "install")
+    # Version should be updated by poetry-dynamic-versioning
+    assert "0.0.0" not in Path("pyproject.toml").read_text()
 
     # Run tests that come from copier template files
-    session.run("pipenv", "run", "invoke", "make")
-
-    # Make sure versioneer files are not documented
-    if Path("docs_src/mypackage._version.rst").exists():
-        raise FileExistsError("Expected no apidoc on _version.py file.")
+    session.run("poetry", "run", "invoke", "make")

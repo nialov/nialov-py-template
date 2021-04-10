@@ -6,20 +6,9 @@ Most tasks employ nox to create a virtual session for testing.
 from invoke import task
 from invoke import UnexpectedExit
 
-nox_parallel_sessions = (
-    "tests_pipenv",
-    "tests_pip",
-)
+nox_parallel_sessions = ("tests_pip",)
 
 package_name = "[[ package ]]"
-
-
-@task
-def requirements(c):
-    """
-    Sync requirements from Pipfile to setup.py.
-    """
-    c.run("nox --session requirements")
 
 
 @task
@@ -38,7 +27,7 @@ def lint(c):
     c.run("nox --session lint")
 
 
-@task(pre=[requirements])
+@task
 def nox_parallel(c):
     """
     Run selected nox test suite sessions in parallel.
@@ -66,7 +55,15 @@ def nox_parallel(c):
     print(f"{len(results)} nox sessions ran succesfully.")
 
 
-@task(pre=[requirements])
+@task
+def update_version(c):
+    """
+    Update pyproject.toml version string.
+    """
+    c.run("nox --session update_version")
+
+
+@task(pre=[update_version])
 def ci_test(c):
     """
     Test suite for continous integration testing.
@@ -86,7 +83,7 @@ def test(_):
     """
 
 
-@task(pre=[requirements])
+@task(pre=[update_version])
 def docs(c):
     """
     Make documentation to docs using nox.
@@ -94,7 +91,7 @@ def docs(c):
     c.run("nox --session docs")
 
 
-@task(pre=[requirements, format])
+@task(pre=[format])
 def notebooks(c):
     """
     Execute and fill notebooks.
@@ -102,7 +99,7 @@ def notebooks(c):
     c.run("nox --session notebooks")
 
 
-@task(pre=[requirements, test, lint, docs, notebooks])
+@task(pre=[update_version, test, lint, docs, notebooks])
 def make(_):
     """
     Make all.

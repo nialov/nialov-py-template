@@ -1,9 +1,8 @@
 """
 Nox test suite.
 """
-import logging
 from pathlib import Path
-from shutil import copy2, copytree, rmtree
+from shutil import rmtree
 from typing import List
 
 import nox
@@ -50,39 +49,6 @@ def fill_notebook(session, notebook: Path):
         "--inplace",
         "--execute",
         str(notebook),
-    )
-
-
-@nox.session(python="3.8")
-def tests_pipenv(session: nox.Session):
-    """
-    Run test suite with pipenv sync.
-    """
-    tmp_dir = session.create_tmp()
-    for to_copy in (package_name, tests_name, pipfile_lock, notebooks_name):
-        if Path(to_copy).is_dir():
-            copytree(to_copy, Path(tmp_dir) / to_copy)
-        elif Path(to_copy).is_file():
-            copy2(to_copy, tmp_dir)
-        elif Path(to_copy).exists():
-            ValueError("File not dir or file.")
-        else:
-            logging.error(f"Expected {to_copy} to exist.")
-    session.chdir(tmp_dir)
-    session.install("pipenv")
-    session.run("pipenv", "--rm", success_codes=[0, 1])
-    session.run(
-        "pipenv",
-        "sync",
-        "--python",
-        f"{session.python}",
-        "--dev",
-        "--bare",
-    )
-    session.run(
-        "pipenv",
-        "run",
-        "pytest",
     )
 
 
@@ -189,15 +155,6 @@ def lint(session):
 
 
 @nox.session
-def requirements(session):
-    """
-    Sync Pipfile to setup.py with pipenv-setup.
-    """
-    session.install("pipenv-setup")
-    session.run("pipenv-setup", "sync", "--pipfile", "--dev")
-
-
-@nox.session
 def docs(session):
     """
     Make documentation.
@@ -239,36 +196,9 @@ def update_version(session):
     """
     Update package version from git vcs.
     """
-    # Install dunamai
-    session.install("dunamai")
+    # Install poetry-dynamic-versioning
+    session.install("poetry-dynamic-versioning")
 
-    # package_name/__init__.py filepath
-    init_py = Path(package_name) / "__init__.py"
-
-    # Text to add to __init__.py
-    dunamai_init_text = [f"from {package_name}._version import __version__"]
-
-    # Check if package_name/__init__.py file exists
-    # and that dunamai is not already initialized there
-    if not init_py.exists() or "dunamai" not in init_py.read_text():
-
-        # Not already initialized
-        # Open in append mode
-        with init_py.open(mode="a+") as open_init:
-
-            # Write the lines
-            open_init.writelines(dunamai_init_text)
-
-        # Assert that everything worked
-        assert "dunamai" in init_py.read_text()
-
-    # package_name/_version.py filepath
-    # This is written to on every execution
-    version_file = Path(package_name) / "_version.py"
-
-    # Run dunamai cli to update version in _version.py
-    session.run(
-        "bash",
-        "-c",
-        f"""'echo __version__ = "$(dunamai from any)" > {version_file}'""",
-    )
+    # Run poetry-dynamic-versioning to update version tag in pyproject.toml
+    # and [[ package ]]/__init__.py
+    session.run("poetry-dynamic-versioning")
