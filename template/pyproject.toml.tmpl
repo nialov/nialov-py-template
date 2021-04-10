@@ -6,6 +6,11 @@ authors = ["[[ github_account ]] <[[ email ]]>"]
 
 [tool.poetry.dependencies]
 python = "3.8"
+coverage = {version = "*", optional = true}
+coverage-badge = {version = "*", optional = true}
+sphinx = {version = "*", optional = true}
+sphinx-rtd-theme = {version = "*", optional = true}
+nbsphinx = {version = "*", optional = true}
 
 [tool.poetry.dev-dependencies]
 nox = "*"
@@ -13,6 +18,10 @@ invoke = "*"
 jupyterlab = "*"
 ipython = "*"
 pytest = "*"
+
+[tool.poetry.extras]
+coverage = ["coverage", "coverage-badge"]
+docs = ["sphinx", "sphinx-rtd-theme", "nbsphinx"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]

@@ -35,6 +35,9 @@ def test(session: nox.Session):
     # Change to test_template dir in the cloned dir
     session.chdir(template_dir_name)
 
+    # Initialize git repo
+    session.run("git", "init", external=True)
+
     # Run copier
     session.run("copier", "--force", "copy", str(current_dir), ".")
 
@@ -48,7 +51,7 @@ def test(session: nox.Session):
     session.run("poetry", "run", "invoke", "update-version")
 
     # Version should be updated by poetry-dynamic-versioning
-    assert "0.0.0" not in Path("pyproject.toml").read_text()
+    assert "0.0.0\n" not in Path("pyproject.toml").read_text()
 
     # Run tests that come from copier template files
     session.run("poetry", "run", "invoke", "make")
