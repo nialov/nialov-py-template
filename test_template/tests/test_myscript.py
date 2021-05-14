@@ -20,7 +20,7 @@ def test_myfunction(directory_path: Path, assume_result: List[str]):
     Test myfunction.
     """
     result = myfunction(directory_path=directory_path)
-    assert all([assume in str(result) for assume in assume_result])
+    assert all(assume in str(result) for assume in assume_result)
 
 
 def test_do_math():

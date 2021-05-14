@@ -20,11 +20,11 @@ def requirements(c):
 
 
 @task(pre=[requirements])
-def lint(c):
+def format_and_lint(c):
     """
-    Lint everything.
+    Format and lint everything.
     """
-    c.run("nox --session lint")
+    c.run("nox --session format_and_lint")
 
 
 @task(pre=[requirements])
@@ -99,7 +99,7 @@ def notebooks(c):
     c.run("nox --session notebooks")
 
 
-@task(pre=[update_version, test, lint, docs, notebooks])
+@task(pre=[update_version, test, format_and_lint, docs, notebooks])
 def make(_):
     """
     Make all.

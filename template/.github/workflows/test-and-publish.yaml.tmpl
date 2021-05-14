@@ -10,7 +10,7 @@ on:
 
 jobs:
   # Test
-  pytest-coverage-lint:
+  pytest-coverage-format-lint:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 2
@@ -29,10 +29,10 @@ jobs:
       - name: Test with invoke -> nox -> pytest
         run: invoke ci-test
       - name: Lint with invoke -> nox -> linters
-        run: invoke lint
+        run: invoke format-and-lint
 
   build-and-publish:
-    needs: pytest-coverage-lint
+    needs: pytest-coverage-format-lint
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     # Pushes to PyPI on tagged commit pushes of master branch
     # Additionally tests building with setuptools on all branches
