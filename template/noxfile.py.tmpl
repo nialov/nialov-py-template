@@ -243,3 +243,18 @@ def update_version(session):
     # Run poetry-dynamic-versioning to update version tag in pyproject.toml
     # and [[ package ]]/__init__.py
     session.run("poetry-dynamic-versioning")
+
+
+@nox.session
+def build(session):
+    """
+    Build package with poetry.
+    """
+    # Install poetry
+    session.install("poetry")
+
+    # Install dependencies to poetry
+    session.run("poetry", "install")
+
+    # Build
+    session.run("poetry", "build")
