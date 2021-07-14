@@ -1,0 +1,11 @@
+# Changes here will be overwritten by Copier
+_src_path: https://github.com/nialov/nialov-py-template.git
+broad_topic: Data Analysis
+description: Python package for stuff.
+email: nikolasovaskainen@gmail.com
+full_name: Nikolas Ovaskainen
+github_account: nialov
+keywords: data analysis spatial geology
+narrow_topic: Spatial Analysis
+package: mypackage
+year: 2021

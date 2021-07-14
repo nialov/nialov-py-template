@@ -20,4 +20,4 @@ jobs:
           pip install nox invoke
       - name: Test with invoke which calls nox
         run: |
-          invoke -c devtasks test
+          invoke test
