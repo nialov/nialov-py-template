@@ -62,9 +62,19 @@ profile = "black"
 multi_line_output = 3
 src_paths = ["[[ package ]]", "tests"]
 
+[tool.pylint.master]
+fail-under = "9.5"
+
 [tool.pylint.report]
 output-format = "text"
 
 [tool.pylint.messages_control]
 max-line-length = 100
-disable = "C0103"
+disable = [
+    "C0103",
+    "R0902",
+    "R0913",
+    "R0914",
+    "W0212",
+    "W1203",
+    ]
