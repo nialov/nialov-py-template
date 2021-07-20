@@ -258,3 +258,21 @@ def build(session):
 
     # Build
     session.run("poetry", "build")
+
+
+@nox.session
+def typecheck(session):
+    """
+    Typecheck Python code.
+    """
+    existing_paths = filter_paths_to_existing(PACKAGE_NAME)
+
+    if len(existing_paths) == 0:
+        print("Nothing to typecheck.")
+        return
+
+    # Install package and typecheck dependencies
+    install_dev(session=session, extras="[typecheck]")
+
+    # Format python files
+    session.run("mypy", *existing_paths)

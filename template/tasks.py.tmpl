@@ -69,6 +69,15 @@ def build(c):
     c.run("nox --session build")
 
 
+@task(pre=[requirements])
+def typecheck(c):
+    """
+    Typecheck module with ``mypy``.
+    """
+    print("Typechecking Python code with mypy.")
+    c.run("nox --session typecheck")
+
+
 @task(pre=[update_version, format_and_lint, docs, notebooks, build])
 def make(_):
     """
