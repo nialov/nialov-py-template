@@ -9,6 +9,7 @@ dev/
 .hypothesis
 .vim
 .esri.gz
+*.html
 
 # We do not want to include requirements.txt
 # It is merely for backwards compatible pip installs
