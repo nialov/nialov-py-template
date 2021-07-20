@@ -78,7 +78,7 @@ def typecheck(c):
     c.run("nox --session typecheck")
 
 
-@task(pre=[update_version, format_and_lint, docs, notebooks, build])
+@task(pre=[update_version, format_and_lint, docs, notebooks, build, typecheck])
 def make(_):
     """
     Make all.
