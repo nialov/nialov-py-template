@@ -72,13 +72,32 @@ def build(c):
 @task(pre=[requirements])
 def typecheck(c):
     """
-    Typecheck module with ``mypy``.
+    Typecheck ``[[ package ]]`` with ``mypy``.
     """
     print("Typechecking Python code with mypy.")
     c.run("nox --session typecheck")
 
 
-@task(pre=[update_version, format_and_lint, docs, notebooks, build, typecheck])
+@task(pre=[requirements])
+def performance_profile(c):
+    """
+    Profile [[ package ]] performance with ``pyinstrument``.
+    """
+    print("Profiling [[ package ]] performance with pyinstrument.")
+    c.run("nox --session profile_performance")
+
+
+@task(
+    pre=[
+        update_version,
+        format_and_lint,
+        docs,
+        notebooks,
+        build,
+        typecheck,
+        performance_profile,
+    ]
+)
 def make(_):
     """
     Make all.
