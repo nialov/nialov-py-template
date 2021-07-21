@@ -87,6 +87,13 @@ def performance_profile(c):
     c.run("nox --session profile_performance")
 
 
+@task(pre=[format_and_lint, ci_test, build, docs])
+def prepush(_):
+    """
+    Test suite for locally verifying continous integration results upstream.
+    """
+
+
 @task(
     pre=[
         update_version,
