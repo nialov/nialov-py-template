@@ -118,7 +118,7 @@ def notebooks(session):
         fill_notebook(session=session, notebook=notebook)
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def format_and_lint(session):
     """
     Format and lint python files, notebooks and docs_src.
@@ -175,7 +175,7 @@ def format_and_lint(session):
         session.run("black-nb", "--check", str(notebook))
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def requirements(session):
     """
     Sync poetry requirements from pyproject.toml to requirements.txt.
@@ -238,7 +238,7 @@ def docs(session):
     )
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def update_version(session):
     """
     Update package version from git vcs.
@@ -251,7 +251,7 @@ def update_version(session):
     session.run("poetry-dynamic-versioning")
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def build(session):
     """
     Build package with poetry.
@@ -299,7 +299,7 @@ def profile_performance(session):
     print(f"\nPerformance profile saved at {resolved_path}.")
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def typecheck(session):
     """
     Typecheck Python code.
