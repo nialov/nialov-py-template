@@ -17,7 +17,7 @@ Short description of functionality
 
 -  Documentation with ``sphinx``, theme ``sphinx-rtd-theme``.
 -  Contains GitHub Actions that call the aforementioned test framework
-   (``pytest-coverage-lint``).
+   (``pytest-coverage`` and ``format-lint``).
 
    -  By default an
       `action <https://github.com/pypa/gh-action-pypi-publish>`__ exists
