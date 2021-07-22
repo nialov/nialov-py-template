@@ -2,7 +2,7 @@ Documentation for nialov-py-template
 ====================================
 
 This is a `copier <https://github.com/copier-org/copier>`__ template for
-Python 3.8 development.
+Python ``3.8`` development.
 
 Highly opinionated and made for personal use.
 
