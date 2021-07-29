@@ -27,6 +27,8 @@ pylint = {version = "*", optional = true}
 rstcheck = {version = "*", optional = true}
 black = {version = "*", optional = true}
 black-nb = {version = "*", optional = true}
+blacken-docs = {version = "*", optional = true}
+blackdoc = {version = "*", optional = true}
 isort = {version = "*", optional = true}
 
 # Typecheck
@@ -48,7 +50,16 @@ docs = [
     "sphinx-gallery",
     "sphinx-autodoc-typehints"
 ]
-format-lint = ["pylint", "rstcheck", "sphinx", "black", "black-nb", "isort"] 
+format-lint = [
+    "pylint",
+    "rstcheck",
+    "sphinx",
+    "black",
+    "black-nb",
+    "isort",
+    "blacken-docs",
+    "blackdoc"
+]
 typecheck = ["mypy"]
 
 [build-system]

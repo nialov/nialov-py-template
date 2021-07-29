@@ -11,10 +11,12 @@ import nox
 PACKAGE_NAME = "[[ package ]]"
 
 # Paths
-DOCS_APIDOC_DIR_PATH = Path("docs_src/apidoc")
+DOCS_SRC_PATH = Path("docs_src")
+DOCS_APIDOC_DIR_PATH = DOCS_SRC_PATH / "apidoc"
 DOCS_DIR_PATH = Path("docs")
-COVERAGE_SVG_PATH = Path("docs_src/imgs/coverage.svg")
+COVERAGE_SVG_PATH = DOCS_SRC_PATH / Path("imgs/coverage.svg")
 PROFILE_SCRIPT_PATH = Path("tests/_profile.py")
+README_PATH = Path("README.rst")
 
 # Path strings
 TESTS_NAME = "tests"
@@ -146,6 +148,20 @@ def format_and_lint(session):
     # Format notebooks
     for notebook in ALL_NOTEBOOKS:
         session.run("black-nb", str(notebook))
+
+    # Format code blocks in documentation files
+    session.run(
+        "blacken-docs",
+        *filter_paths_to_existing(
+            str(README_PATH), list(map(str, DOCS_SRC_PATH.glob("*.rst")))
+        ),
+    )
+
+    # Format code blocks in Python files
+    session.run(
+        "blackdoc",
+        *existing_paths,
+    )
 
     # Lint docs
     session.run(
