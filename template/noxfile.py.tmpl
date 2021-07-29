@@ -29,6 +29,7 @@ DOCS_REQUIREMENTS = "docs_src/requirements.txt"
 # Globs
 DOCS_NOTEBOOKS = Path("docs_src/notebooks").glob("*.ipynb")
 REGULAR_NOTEBOOKS = Path(NOTEBOOKS_NAME).glob("*.ipynb")
+DOCS_RST_PATHS = DOCS_SRC_PATH.rglob("*.rst")
 ALL_NOTEBOOKS = list(DOCS_NOTEBOOKS) + list(REGULAR_NOTEBOOKS)
 
 PYTHON_VERSIONS = ["3.8", "3.9"]
@@ -153,7 +154,7 @@ def format_and_lint(session):
     session.run(
         "blacken-docs",
         *filter_paths_to_existing(
-            str(README_PATH), list(map(str, DOCS_SRC_PATH.glob("*.rst")))
+            str(README_PATH), *list(map(str, list(DOCS_RST_PATHS)))
         ),
     )
 
