@@ -9,7 +9,7 @@ from shutil import copytree
 template_dir_name = "test_template"
 
 
-@nox.session
+@nox.session(python="3.8")
 def test(session: nox.Session):
     """
     Test template with nox session.
@@ -47,6 +47,14 @@ def test(session: nox.Session):
     # Initialize pre-commit
     session.run("pre-commit", "install")
     session.run("pre-commit", "install", "--hook-type", "commit-msg")
+
+    # Stage and commit all
+    # Will check commit hooks
+    session.run("git", "add", ".", external=True)
+    session.run(
+        "git", "commit", "-m", "'incorrect msg'", success_codes=[1], external=True
+    )
+    session.run("git", "commit", "-m", "'feat: commit all files'", external=True)
 
     # Check all files with pre-commit
     session.run("pre-commit", "run", "--all-files")
