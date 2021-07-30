@@ -15,7 +15,7 @@ def test(session: nox.Session):
     Test template with nox session.
     """
     # Install dependencies
-    session.install("poetry", "copier")
+    session.install("poetry", "copier", "pre-commit")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
@@ -43,6 +43,13 @@ def test(session: nox.Session):
 
     # rm any existing poetry venv
     session.run("poetry", "env", "remove", "python", success_codes=[0, 1])
+
+    # Initialize pre-commit
+    session.run("pre-commit", "install")
+    session.run("pre-commit", "install", "--hook-type", "commit-msg")
+
+    # Check all files with pre-commit
+    session.run("pre-commit", "run", "--all-files")
 
     # Install with poetry
     session.run("poetry", "install")
