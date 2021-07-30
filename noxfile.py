@@ -51,10 +51,34 @@ def test(session: nox.Session):
     # Stage and commit all
     # Will check commit hooks
     session.run("git", "add", ".", external=True)
+    # Formatting hooks will change files resulting in unstaged files
     session.run(
-        "git", "commit", "-m", "'incorrect msg'", success_codes=[1], external=True
+        "git",
+        "commit",
+        "-m",
+        "'feat: commit all files'",
+        external=True,
+        success_codes=[1],
     )
-    session.run("git", "commit", "-m", "'feat: commit all files'", external=True)
+    # Stage and commit unstaged but with bad commit message
+    session.run(
+        "git",
+        "commit",
+        "-a",
+        "-m",
+        "wrong commit style!",
+        external=True,
+        success_codes=[1],
+    )
+    # Stage and commit unstaged with good commit message
+    session.run(
+        "git",
+        "commit",
+        "-a",
+        "-m",
+        "style: add formatted",
+        external=True,
+    )
 
     # Check all files with pre-commit
     session.run("pre-commit", "run", "--all-files")
@@ -67,6 +91,9 @@ def test(session: nox.Session):
 
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text()
+
+    # Test pre_commit task
+    session.run("poetry", "run", "invoke", "pre-commit")
 
     # Run tests that come from copier template files
     session.run("poetry", "run", "invoke", "make")
