@@ -75,9 +75,9 @@ def tests_pip(session):
     # Check if any tests exist
     tests_path = Path(TESTS_NAME)
     if (
-        (not tests_path.exists())
-        or (tests_path.is_file())
-        or (len(list(tests_path.iterdir())) == 0)
+        not tests_path.exists()
+        or tests_path.is_file()
+        or len(list(tests_path.iterdir())) == 0
     ):
         print("No tests in {TESTS_NAME} directory.")
         return
