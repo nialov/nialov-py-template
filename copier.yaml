@@ -46,10 +46,10 @@ email:
 
 classifier:
   type: str
-  help: See https://pypi.org/classifiers/
+  help: See https://pypi.org/classifiers/. Add others in ./pyproject.toml
   default: "Topic :: Scientific/Engineering :: GIS"
 
-keywords:
+keyword:
   type: str
-  help: Keywords, space separated
-  default: data analysis spatial geology
+  help: A single keyword to get started. Fill the rest in ./pyproject.toml.
+  default: data

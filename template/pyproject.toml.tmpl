@@ -3,6 +3,22 @@ name = "[[ package ]]"
 version = "0.0.0"
 description = "[[ description ]]"
 authors = ["[[ github_account ]] <[[ email ]]>"]
+readme = "README.rst"
+license = "MIT"
+# Make sure hyphens/underscores are correct in urls
+homepage = "https://github.com/[[ github_account ]]/[[ package]]"
+repository = "https://github.com/[[ github_account ]]/[[ package ]]"
+documentation = "https://[[ package ]].readthedocs.io/en/latest/"
+# For inspiration: https://pydigger.com/keywords
+keywords = [
+    "[[ keyword ]]",
+]
+# See https://pypi.org/classifiers/
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only"
+    "[[ classifier ]]"
+]
+include = ["CHANGELOG.md"]
 
 [tool.poetry.scripts]
 [[ package ]] = "[[ package ]].cli:app"
@@ -110,3 +126,9 @@ disable = [
 
 [tool.pylint.similarities]
 ignore-imports = true
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true

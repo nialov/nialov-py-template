@@ -3,7 +3,7 @@ Nox test suite.
 """
 from pathlib import Path
 from shutil import rmtree
-from typing import List
+from typing import List, Tuple
 
 import nox
 
@@ -25,6 +25,8 @@ TASKS_NAME = "tasks.py"
 NOXFILE_NAME = "noxfile.py"
 DEV_REQUIREMENTS = "requirements.txt"
 DOCS_REQUIREMENTS = "docs_src/requirements.txt"
+DOCS_EXAMPLES = "examples"
+DOCS_AUTO_EXAMPLES = "docs_src/auto_examples"
 
 # Globs
 DOCS_NOTEBOOKS = Path("docs_src/notebooks").glob("*.ipynb")
@@ -35,7 +37,7 @@ ALL_NOTEBOOKS = list(DOCS_NOTEBOOKS) + list(REGULAR_NOTEBOOKS)
 PYTHON_VERSIONS = ["3.8", "3.9"]
 
 
-def filter_paths_to_existing(*iterables) -> List[str]:
+def filter_paths_to_existing(*iterables: str) -> List[str]:
     """
     Filter paths to only existing.
     """
@@ -106,7 +108,7 @@ def notebooks(session):
     Run notebooks.
 
     Notebooks are usually run in remote so use pip install.
-    Note that notebooks shouldn't have side effects i.e. file disk file writing.
+    Note that notebooks shouldn't have side effects i.e. disk file writing.
     """
     # Check if any notebooks exist.
     if len(ALL_NOTEBOOKS) == 0:
@@ -127,7 +129,7 @@ def format_and_lint(session):
     Format and lint python files, notebooks and docs_src.
     """
     existing_paths = filter_paths_to_existing(
-        PACKAGE_NAME, TESTS_NAME, TASKS_NAME, NOXFILE_NAME
+        PACKAGE_NAME, TESTS_NAME, TASKS_NAME, NOXFILE_NAME, DOCS_EXAMPLES
     )
 
     if len(existing_paths) == 0:
@@ -216,7 +218,7 @@ def requirements(session):
     )
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def docs(session):
     """
     Make documentation.
@@ -245,14 +247,21 @@ def docs(session):
         "sphinx-apidoc", "-o", "./docs_src/apidoc", f"./{PACKAGE_NAME}", "-e", "-f"
     )
 
-    # Create docs in ./docs folder
-    session.run(
-        "sphinx-build",
-        "./docs_src",
-        "./docs",
-        "-b",
-        "html",
-    )
+    try:
+        # Create docs in ./docs folder
+        session.run(
+            "sphinx-build",
+            "./docs_src",
+            "./docs",
+            "-b",
+            "html",
+        )
+
+    finally:
+        # Clean up sphinx-gallery folder in ./docs_src/auto_examples
+        auto_examples_path = Path(DOCS_AUTO_EXAMPLES)
+        if auto_examples_path.exists():
+            rmtree(auto_examples_path)
 
 
 @nox.session(reuse_venv=True)
@@ -268,7 +277,7 @@ def update_version(session):
     session.run("poetry-dynamic-versioning")
 
 
-@nox.session(reuse_venv=True)
+@nox.session(reuse_venv=True, python=PYTHON_VERSIONS)
 def build(session):
     """
     Build package with poetry.

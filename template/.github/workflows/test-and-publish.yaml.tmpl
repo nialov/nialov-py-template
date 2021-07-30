@@ -11,7 +11,6 @@ on:
     - cron: "41 7 * * 5"
 
 jobs:
-  # Test
   pytest-coverage:
     name: Test and check coverage of 🐍 code
     strategy:
@@ -37,7 +36,7 @@ jobs:
     name: Format and lint 🐍 code
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 🐍
+      - name: Set up Python 🐍 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
@@ -66,12 +65,12 @@ jobs:
         run: invoke docs
 
   build-and-publish:
+    runs-on: ubuntu-latest
     # Requires that unit tests pass but doesn't require lints
     needs: pytest-coverage
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     # Pushes to PyPI on tagged commit pushes of master branch
     # Additionally tests building with setuptools on all branches
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Set up Python 3.8
