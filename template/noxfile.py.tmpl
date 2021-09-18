@@ -358,6 +358,11 @@ def validate_citation_cff(session):
     tmp_dir = session.create_tmp()
     session.chdir(tmp_dir)
 
+    # Remove existing dir
+    citation_file_format_dir = Path("citation-file-format")
+    if citation_file_format_dir.exists():
+        rmtree(citation_file_format_dir)
+
     # clone this repository and chdir into the repo
     session.run(
         "git",
@@ -367,7 +372,7 @@ def validate_citation_cff(session):
         "1",
         external=True,
     )
-    session.chdir("citation-file-format")
+    session.chdir(str(citation_file_format_dir))
 
     # install the validation dependencies in user space
     session.install("ruamel.yaml", "jsonschema")
