@@ -7,7 +7,11 @@
 # echo "doi: $doi" >> CITATION.cff
 git fetch
 curr_date=$(date +'%Y-%m-%d')
-version=$(git describe --tags --abbrev=0 | sed 's/v//g' || echo '0.0.0')
+version=$(git describe --tags --abbrev=0 | sed 's/v//g')
+if [ -z "$version"]
+then
+    version=$(echo '0.0.0')
+fi
 commit=$(git rev-parse HEAD)
 github_url="https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]"
 # [% set given_name, family_name = full_name.split(' ') %]
