@@ -6,9 +6,9 @@ authors = ["[[ github_account ]] <[[ email ]]>"]
 readme = "README.rst"
 license = "MIT"
 # Make sure hyphens/underscores are correct in urls
-homepage = "https://github.com/[[ github_account ]]/[[ package]]"
-repository = "https://github.com/[[ github_account ]]/[[ package ]]"
-documentation = "https://[[ package ]].readthedocs.io/en/latest/"
+homepage = "https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]"
+repository = "https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]"
+documentation = "https://[[ package|replace('_', '-') ]].readthedocs.io/en/latest/"
 # For inspiration: https://pydigger.com/keywords
 keywords = [
     "[[ keyword ]]",
