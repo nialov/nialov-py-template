@@ -8,6 +8,8 @@
 git fetch
 curr_date=$(date +'%Y-%m-%d')
 version=$(git describe --tags --abbrev=0 | sed 's/v//g')
+commit=$(git rev-parse HEAD)
+github_url="https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]"
 
 contents="
 cff-version: 1.2.0
@@ -22,7 +24,13 @@ date-released: \"$curr_date\"
 keywords:
   - python
   - [[ keyword ]]
-url: \"https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]\""
+type: software
+contact:
+  - email: \"[[ email ]]\"
+commit: $commit
+url: \"$github_url\"
+repository-code: \"$github_url\"
+"
 
 echo "$contents" | tail --lines=+2 > CITATION.cff
 cat CITATION.cff
