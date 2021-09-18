@@ -8,8 +8,7 @@
 git fetch
 curr_date=$(date +'%Y-%m-%d')
 version=$(git describe --tags --abbrev=0 | sed 's/v//g')
-if [ -z "$version"]
-then
+if [ -z "$version"]; then
     version=$(echo '0.0.0')
 fi
 github_url="https://github.com/[[ github_account ]]/[[ package|replace('_', '-') ]]"
