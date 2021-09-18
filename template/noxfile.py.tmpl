@@ -27,6 +27,7 @@ DEV_REQUIREMENTS = "requirements.txt"
 DOCS_REQUIREMENTS = "docs_src/requirements.txt"
 DOCS_EXAMPLES = "examples"
 DOCS_AUTO_EXAMPLES = "docs_src/auto_examples"
+CITATION_CFF_NAME = "CITATION.cff"
 
 # Globs
 DOCS_NOTEBOOKS = Path("docs_src/notebooks").glob("*.ipynb")
@@ -350,7 +351,14 @@ def validate_citation_cff(session):
 
     From: https://github.com/citation-file-format/citation-file-format
     """
-    # clone this repository
+    # Path to CITATION.cff
+    citation_cff_path = Path(CITATION_CFF_NAME).absolute()
+
+    # create temporary directory and chdir there
+    tmp_dir = session.create_tmp()
+    session.chdir(tmp_dir)
+
+    # clone this repository and chdir into the repo
     session.run(
         "git",
         "clone",
@@ -359,8 +367,6 @@ def validate_citation_cff(session):
         "1",
         external=True,
     )
-
-    # change into the cloned repository directory
     session.chdir("citation-file-format")
 
     # install the validation dependencies in user space
@@ -369,9 +375,9 @@ def validate_citation_cff(session):
     # run the validator on your CITATION.cff
     session.run(
         "python3",
-        "examples/validator.py",
+        str(Path("examples/validator.py")),
         "-s",
         "schema.json",
         "-d",
-        "../CITATION.cff",
+        str(citation_cff_path),
     )
