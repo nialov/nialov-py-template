@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "[[ package ]]"
+name = "[[ package|replace('_', '-') ]]"
 version = "0.0.0"
 description = "[[ description ]]"
 authors = ["[[ github_account ]] <[[ email ]]>"]
@@ -119,6 +119,7 @@ disable = [
     "R0902",
     "R0913",
     "R0914",
+    "R1735",
     "W0212",
     "W0621",
     "W0703",
