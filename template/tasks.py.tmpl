@@ -97,7 +97,7 @@ def citation(c):
     print(f"Making {GENERATE_CITATION_SH} executable.")
     c.run(f"chmod u+x {GENERATE_CITATION_SH}")
     print("Generating CITATION.cff")
-    c.run(GENERATE_CITATION_SH)
+    c.run(f"./{GENERATE_CITATION_SH}")
 
 
 @task(
