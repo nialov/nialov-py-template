@@ -6,7 +6,8 @@ from pathlib import Path
 from shutil import copytree
 
 
-template_dir_name = "test_template"
+TEMPLATE_DIR_NAME = "test_template"
+CITATION_CFF = Path("CITATION.cff")
 
 
 @nox.session(python="3.8")
@@ -21,7 +22,7 @@ def test(session: nox.Session):
     current_dir = Path(".").resolve()
 
     # Resolve test_template dir
-    template_dir = current_dir / template_dir_name
+    template_dir = current_dir / TEMPLATE_DIR_NAME
 
     # Create temporary directory
     tmp_dir = session.create_tmp()
@@ -30,10 +31,10 @@ def test(session: nox.Session):
     session.chdir(tmp_dir)
 
     # Copy test_template dir to temp dir
-    copytree(template_dir, template_dir_name)
+    copytree(template_dir, TEMPLATE_DIR_NAME)
 
     # Change to test_template dir in the cloned dir
-    session.chdir(template_dir_name)
+    session.chdir(TEMPLATE_DIR_NAME)
 
     # Initialize git repo
     session.run("git", "init", external=True)
@@ -97,3 +98,6 @@ def test(session: nox.Session):
 
     # Run tests that come from copier template files
     session.run("poetry", "run", "invoke", "make")
+
+    # Check that CITATION.cff exists and is not empty
+    assert CITATION_CFF.exists() and len(CITATION_CFF.read_text()) > 10
