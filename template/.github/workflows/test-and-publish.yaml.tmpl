@@ -115,3 +115,81 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+
+  changelog:
+    runs-on: ubuntu-latest
+    name: Update CHANGELOG.md
+    needs: pytest-coverage
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch tags
+        run: git fetch --prune --unshallow --tags --force
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Set output variable to current tag
+        id: current_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Switch to master branch
+        run: |
+          git checkout master
+          git pull
+      - name: Install auto-changelog from own repo and pandoc
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/nialov/auto-changelog.git
+          sudo apt install pandoc
+      - name: Update changelog using auto-changelog
+        run: >
+          auto-changelog --tag-prefix 'v' --stdout --unreleased
+          --latest-version="${{ steps.current_tag.outputs.tag }}"
+          | sed -e 'G;' 
+          | pandoc --from markdown --to markdown
+          > CHANGELOG.md
+      - name: Echo CHANGELOG.md for debugging
+        run: cat CHANGELOG.md
+      - name: Commit CHANGELOG.md if processing tag
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): update changelog" || echo "no changes"
+          git push || echo "nothing/failed to push"
+      - name: Upload CHANGELOG.md artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog
+          path: ./CHANGELOG.md
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [pytest-coverage, changelog, Validate-CITATION-cff]
+    name: Release on GitHub
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch tags
+        run: git fetch --prune --unshallow --tags --force
+      - name: Download CHANGELOG.md artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: changelog
+      - name: Create incremental changelog
+        run: >
+          cat CHANGELOG.md 
+          | sed -n '1,/github/p' 
+          > RELEASE_CHANGELOG.md
+
+      - name: Echo RELEASE_CHANGELOG.md
+        run: cat RELEASE_CHANGELOG.md
+
+      - name: Publish release on GitHub
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            RELEASE_CHANGELOG.md
+          body_path: RELEASE_CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
