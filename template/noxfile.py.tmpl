@@ -341,3 +341,34 @@ def typecheck(session):
 
     # Format python files
     session.run("mypy", *existing_paths)
+
+
+@nox.session(reuse_venv=True)
+def validate_citation_cff(session):
+    """
+    Validate CITATION.cff.
+    """
+    # clone this repository
+    session.run(
+        "git",
+        "clone",
+        "https://github.com/citation-file-format/citation-file-format.git",
+        "--depth",
+        "1",
+    )
+
+    # change into the cloned repository directory
+    session.run("cd", "citation-file-format")
+
+    # install the validation dependencies in user space
+    session.install("ruamel.yaml", "jsonschema")
+
+    # run the validator on your CITATION.cff
+    session.run(
+        "python3",
+        "examples/validator.py",
+        "-s",
+        "schema.json",
+        "-d",
+        "../CITATION.cff",
+    )

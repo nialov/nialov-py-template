@@ -64,10 +64,35 @@ jobs:
       - name: Build docs with invoke -> nox session
         run: invoke docs
 
+  # From https://github.com/dieghernan/cff-validator
+  Validate-CITATION-cff:
+    runs-on: ubuntu-latest
+    name: Validate CITATION.cff
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # This is needed for workflows running on
+      # ubuntu-20.04 or later
+      - name: Install V8
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y libv8-dev
+      - name: Validate CITATION.cff
+        uses: dieghernan/cff-validator@main
+      # Upload artifact
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: citation-cff-errors
+          path: citation_cff_errors.md
+
   build-and-publish:
     runs-on: ubuntu-latest
     # Requires that unit tests pass but doesn't require lints
-    needs: pytest-coverage
+    needs: [pytest-coverage, Validate-CITATION-cff]
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     # Pushes to PyPI on tagged commit pushes of master branch
     # Additionally tests building with setuptools on all branches

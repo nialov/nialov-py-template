@@ -92,12 +92,14 @@ def performance_profile(c):
 @task
 def citation(c):
     """
-    Sync CITATION.cff.
+    Sync and validate CITATION.cff.
     """
     print(f"Making {GENERATE_CITATION_SH} executable.")
     c.run(f"chmod u+x {GENERATE_CITATION_SH}")
     print("Generating CITATION.cff")
     c.run(f"./{GENERATE_CITATION_SH}")
+    print("Validating CITATION.cff")
+    c.run("nox --session validate_citation_cff")
 
 
 @task(
