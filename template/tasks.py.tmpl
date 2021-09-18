@@ -6,6 +6,7 @@ Most tasks employ nox to create a virtual session for testing.
 from invoke import task
 
 PACKAGE_NAME = "[[ package ]]"
+GENERATE_CITATION_SH = "generate_citation.sh"
 
 
 @task
@@ -93,7 +94,10 @@ def citation(c):
     """
     Sync CITATION.cff.
     """
-    c.run("./generate_citation.sh")
+    print(f"Making {GENERATE_CITATION_SH} executable.")
+    c.run(f"chmod u+x {GENERATE_CITATION_SH}")
+    print("Generating CITATION.cff")
+    c.run(GENERATE_CITATION_SH)
 
 
 @task(
