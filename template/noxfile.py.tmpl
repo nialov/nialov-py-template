@@ -347,6 +347,8 @@ def typecheck(session):
 def validate_citation_cff(session):
     """
     Validate CITATION.cff.
+
+    From: https://github.com/citation-file-format/citation-file-format
     """
     # clone this repository
     session.run(
@@ -355,10 +357,11 @@ def validate_citation_cff(session):
         "https://github.com/citation-file-format/citation-file-format.git",
         "--depth",
         "1",
+        external=True,
     )
 
     # change into the cloned repository directory
-    session.run("cd", "citation-file-format")
+    session.chdir("citation-file-format")
 
     # install the validation dependencies in user space
     session.install("ruamel.yaml", "jsonschema")
