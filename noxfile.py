@@ -93,6 +93,16 @@ def test(session: nox.Session):
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text()
 
+    tag = "v0.0.5"
+    # Update the all project strings with own script
+    session.run("poetry", "run", "invoke", "update-version", f"--tag={tag}")
+
+    # Version should be updated
+    assert all(
+        tag[1:] in Path(path).read_text()
+        for path in ("pyproject.toml", "CITATION.cff", "mypackage/__init__.py")
+    )
+
     # Test pre_commit task
     session.run("poetry", "run", "invoke", "pre-commit")
 

@@ -4,9 +4,23 @@ Invoke tasks.
 Most tasks employ nox to create a virtual session for testing.
 """
 from invoke import task
+from pathlib import Path
+from time import strftime
+from itertools import chain
+import re
+
 
 PACKAGE_NAME = "[[ package ]]"
-GENERATE_CITATION_SH = "generate_citation.sh"
+CITATION_CFF_PATH = Path("CITATION.cff")
+DATE_RELEASED_STR = "date-released"
+
+VERSION_GLOBS = [
+    "*/__init__.py",
+    "CITATION.cff",
+    "pyproject.toml",
+]
+
+VERSION_PATTERN = r"(^_*version_*\s*[:=]\s\").*\""
 
 
 @task
@@ -26,11 +40,28 @@ def format_and_lint(c):
 
 
 @task
-def update_version(c):
+def update_version(c, tag=""):
     """
     Update pyproject.toml and package/__init__.py version strings.
     """
-    c.run("nox --session update_version")
+    if len(tag) == 0:
+        c.run("nox --session update_version")
+        return
+
+    tag = tag if "v" not in tag else tag[1:]
+    for path in chain(*[Path(".").glob(glob) for glob in (VERSION_GLOBS)]):
+        new_lines = []
+        for line in path.read_text().splitlines():
+            substituted = re.sub(VERSION_PATTERN, r"\1" + tag + r'"', line)
+            if line != substituted:
+                print(
+                    f"Replacing version string:\n{line}\nin"
+                    f" {path} with:\n{substituted}\n"
+                )
+                new_lines.append(substituted)
+            else:
+                new_lines.append(line)
+        path.write_text("\n".join(new_lines))
 
 
 @task(pre=[requirements, update_version])
