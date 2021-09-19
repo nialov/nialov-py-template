@@ -52,7 +52,7 @@ def update_version(c, tag=""):
     for path in chain(*[Path(".").glob(glob) for glob in (VERSION_GLOBS)]):
         new_lines = []
         for line in path.read_text().splitlines():
-            substituted = re.sub(VERSION_PATTERN, r"\1" + tag + r'"', line)
+            substituted = re.sub(VERSION_PATTERN, r"\g<1>" + tag + r'"', line)
             if line != substituted:
                 print(
                     f"Replacing version string:\n{line}\nin"
