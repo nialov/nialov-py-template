@@ -64,9 +64,31 @@ jobs:
       - name: Build docs with invoke -> nox session
         run: invoke docs
 
+  citation:
+    runs-on: ubuntu-latest
+    name: Build citation and validate it
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nox invoke
+      - name: Build docs with invoke -> nox session
+        run: invoke citation
+      - uses: actions/upload-artifact@v2
+        with:
+          name: citation-cff
+          path: CITATION.cff
+    
+
   # From https://github.com/dieghernan/cff-validator
   Validate-CITATION-cff:
     runs-on: ubuntu-latest
+    needs: citation
     name: Validate CITATION.cff
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -88,6 +110,7 @@ jobs:
         with:
           name: citation-cff-errors
           path: citation_cff_errors.md
+    
 
   build-and-publish:
     runs-on: ubuntu-latest
@@ -169,8 +192,6 @@ jobs:
     name: Release on GitHub
     steps:
       - uses: actions/checkout@v2
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags --force
       - name: Download CHANGELOG.md artifact
         uses: actions/download-artifact@v2
         with:
