@@ -136,8 +136,8 @@ def prepush(_):
     """
 
 
-@task(pre=[prepush])
-def tag(c, tag="", annotation="", commit=False):
+@task(pre=[ci_test])
+def tag(c, tag="", annotation=""):
     """
     Make new tag and update version strings accordingly
     """
@@ -174,17 +174,17 @@ def tag(c, tag="", annotation="", commit=False):
         path.write_text("\n".join(new_lines))
 
     cmds = (
+        "# Run pre-commit to check files.",
+        "pre-commit run --all-files",
         "git add .",
+        "# Make sure only version updates are committed!"
         "git commit -m 'docs: update version'",
+        "# Make sure tag is proper!",
         f"git tag -a v{tag} -m '{annotation}'",
     )
-    print(
-        "--commit given. Running git commands:"
-        if commit
-        else "Not running git cmds. See below for suggested commands:"
-    )
+    print("Not running git cmds. See below for suggested commands:\n---\n")
     for cmd in cmds:
-        c.run(cmd) if commit else print(cmd)
+        print(cmd)
 
 
 @task
