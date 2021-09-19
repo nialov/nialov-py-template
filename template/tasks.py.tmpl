@@ -127,6 +127,14 @@ def citation(c):
     c.run("nox --session validate_citation_cff")
 
 
+@task
+def changelog(c):
+    """
+    Generate changelog.
+    """
+    c.run("nox --session changelog")
+
+
 @task(
     pre=[requirements, update_version, format_and_lint, ci_test, build, docs, citation]
 )
@@ -137,7 +145,7 @@ def prepush(_):
 
 
 @task(pre=[ci_test])
-def tag(c, tag="", annotation=""):
+def tag(_, tag="", annotation=""):
     """
     Make new tag and update version strings accordingly
     """

@@ -28,6 +28,7 @@ DOCS_REQUIREMENTS = "docs_src/requirements.txt"
 DOCS_EXAMPLES = "examples"
 DOCS_AUTO_EXAMPLES = "docs_src/auto_examples"
 CITATION_CFF_NAME = "CITATION.cff"
+CHANGELOG_MD_NAME = "CHANGELOG.md"
 
 # Globs
 DOCS_NOTEBOOKS = Path("docs_src/notebooks").glob("*.ipynb")
@@ -386,3 +387,45 @@ def validate_citation_cff(session):
         "-d",
         str(citation_cff_path),
     )
+
+
+@nox.session(reuse_venv=True)
+def changelog(session):
+    """
+    Create CHANGELOG.md.
+    """
+    pandoc_installed = True
+    try:
+        session.run("pandoc", "--help")
+    except Exception:
+        pandoc_installed = False
+        print("Expected 'pandoc' to be installed. Cannot generate clean changelog.")
+
+    session.install("git+https://github.com/nialov/auto-changelog.git")
+    session.run(
+        "auto-changelog",
+        "--tag-prefix",
+        "v" "--stdout",
+        "--unreleased",
+        "|",
+        "sed",
+        "-e",
+        "G;" "|",
+        *(
+            (
+                "pandoc",
+                "--from",
+                "markdown",
+                "--to",
+                "markdown",
+            )
+            if pandoc_installed
+            else ("",)
+        ),
+        ">",
+        "CHANGELOG.md",
+        external=True,
+    )
+    # Path to changelog.md
+    changelog_path = Path(CHANGELOG_MD_NAME).absolute()
+    assert changelog_path.exists()
