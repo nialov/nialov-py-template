@@ -40,28 +40,11 @@ def format_and_lint(c):
 
 
 @task
-def update_version(c, tag=""):
+def update_version(c):
     """
     Update pyproject.toml and package/__init__.py version strings.
     """
-    if len(tag) == 0:
-        c.run("nox --session update_version")
-        return
-
-    tag = tag if "v" not in tag else tag[1:]
-    for path in chain(*[Path(".").glob(glob) for glob in (VERSION_GLOBS)]):
-        new_lines = []
-        for line in path.read_text().splitlines():
-            substituted = re.sub(VERSION_PATTERN, r"\g<1>" + tag + r'"', line)
-            if line != substituted:
-                print(
-                    f"Replacing version string:\n{line}\nin"
-                    f" {path} with:\n{substituted}\n"
-                )
-                new_lines.append(substituted)
-            else:
-                new_lines.append(line)
-        path.write_text("\n".join(new_lines))
+    c.run("nox --session update_version")
 
 
 @task(pre=[requirements, update_version])
@@ -151,6 +134,57 @@ def prepush(_):
     """
     Test suite for locally verifying continous integration results upstream.
     """
+
+
+@task(pre=[prepush])
+def tag(c, tag="", annotation="", commit=False):
+    """
+    Make new tag and update version strings accordingly
+    """
+    if len(tag) == 0:
+        raise ValueError(f"Tag string must be specified with '--tag=*'.")
+    if len(annotation) == 0:
+        raise ValueError(f"Annotation string must be specified with '--annotation=*'.")
+
+    # Remove v at the start of tag
+    tag = tag if "v" not in tag else tag[1:]
+
+    # Iterate over all files determined from VERSION_GLOBS
+    for path in chain(*[Path(".").glob(glob) for glob in (VERSION_GLOBS)]):
+
+        # Collect new lines
+        new_lines = []
+        for line in path.read_text().splitlines():
+
+            # Substitute lines with new tag if they match pattern
+            substituted = re.sub(VERSION_PATTERN, r"\g<1>" + tag + r'"', line)
+
+            # Report to user
+            if line != substituted:
+                print(
+                    f"Replacing version string:\n{line}\nin"
+                    f" {path} with:\n{substituted}\n"
+                )
+                new_lines.append(substituted)
+            else:
+                # No match, append line anyway
+                new_lines.append(line)
+
+        # Write results to files
+        path.write_text("\n".join(new_lines))
+
+    cmds = (
+        "git add .",
+        "git commit -m 'docs: update version'",
+        f"git tag -a v{tag} -m '{annotation}'",
+    )
+    print(
+        "--commit given. Running git commands:"
+        if commit
+        else "Not running git cmds. See below for suggested commands:"
+    )
+    for cmd in cmds:
+        c.run(cmd) if commit else print(cmd)
 
 
 @task
