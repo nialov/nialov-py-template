@@ -125,10 +125,21 @@ def citation(c):
     """
     Sync and validate CITATION.cff.
     """
-    print(f"Making {GENERATE_CITATION_SH} executable.")
-    c.run(f"chmod u+x {GENERATE_CITATION_SH}")
-    print("Generating CITATION.cff")
-    c.run(f"./{GENERATE_CITATION_SH}")
+    print("Updating CITATION.cff date")
+    citation_text = CITATION_CFF_PATH.read_text()
+    citation_lines = citation_text.splitlines()
+    if DATE_RELEASED_STR not in citation_text:
+        raise ValueError(
+            f"Expected to find {DATE_RELEASED_STR} str in {CITATION_CFF_PATH}."
+            f"\nCheck & validate {CITATION_CFF_PATH}."
+        )
+    date = strftime("%Y-%m-%d")
+    new_lines = [
+        line if "date-released" not in line else f'date-released: "{date}"'
+        for line in citation_lines
+    ]
+    CITATION_CFF_PATH.write_text("\n".join(new_lines))
+
     print("Validating CITATION.cff")
     c.run("nox --session validate_citation_cff")
 
