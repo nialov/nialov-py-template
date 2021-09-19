@@ -84,6 +84,9 @@ def test(session: nox.Session):
     # Check all files with pre-commit
     session.run("pre-commit", "run", "--all-files")
 
+    # Test pre_commit task
+    session.run("poetry", "run", "invoke", "pre-commit")
+
     # Install with poetry
     session.run("poetry", "install")
 
@@ -93,18 +96,17 @@ def test(session: nox.Session):
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text()
 
-    tag = "v0.0.5"
     # Update the all project strings with own script
-    session.run("poetry", "run", "invoke", "update-version", f"--tag={tag}")
+    tag = "v0.0.5"
+    session.run(
+        "poetry", "run", "invoke", "tag", f"--tag={tag}", "--annotation='Annotated!'"
+    )
 
     # Version should be updated
     assert all(
         tag[1:] in Path(path).read_text()
         for path in ("pyproject.toml", "CITATION.cff", "mypackage/__init__.py")
     )
-
-    # Test pre_commit task
-    session.run("poetry", "run", "invoke", "pre-commit")
 
     # Run tests that come from copier template files
     session.run("poetry", "run", "invoke", "make")
