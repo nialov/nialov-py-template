@@ -79,43 +79,12 @@ jobs:
           pip install nox invoke
       - name: Build docs with invoke -> nox session
         run: invoke citation
-      - uses: actions/upload-artifact@v2
-        with:
-          name: citation-cff
-          path: CITATION.cff
-    
-
-  # From https://github.com/dieghernan/cff-validator
-  Validate-CITATION-cff:
-    runs-on: ubuntu-latest
-    needs: citation
-    name: Validate CITATION.cff
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      # This is needed for workflows running on
-      # ubuntu-20.04 or later
-      - name: Install V8
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y libv8-dev
-      - name: Validate CITATION.cff
-        uses: dieghernan/cff-validator@main
-      # Upload artifact
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: citation-cff-errors
-          path: citation_cff_errors.md
     
 
   build-and-publish:
     runs-on: ubuntu-latest
     # Requires that unit tests pass but doesn't require lints
-    needs: [pytest-coverage, Validate-CITATION-cff]
+    needs: [pytest-coverage]
     name: Build and publish Python 🐍 distributions 📦 to PyPI
     # Pushes to PyPI on tagged commit pushes of master branch
     # Additionally tests building with setuptools on all branches
@@ -139,59 +108,12 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
 
-  changelog:
-    runs-on: ubuntu-latest
-    name: Update CHANGELOG.md
-    needs: pytest-coverage
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-    steps:
-      - uses: actions/checkout@v2
-      - name: Fetch tags
-        run: git fetch --prune --unshallow --tags --force
-      - name: Set up Python 🐍
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Set output variable to current tag
-        id: current_tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-      - name: Switch to master branch
-        run: |
-          git checkout master
-          git pull
-      - name: Install invoke, nox and pandoc
-        run: |
-          python -m pip install --upgrade pip
-          pip install invoke nox
-          sudo apt install pandoc
-      - name: Update changelog using auto-changelog
-        run: >
-          invoke changelog
-      - name: Echo CHANGELOG.md for debugging
-        run: cat CHANGELOG.md
-      - name: Commit CHANGELOG.md if processing tag
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add CHANGELOG.md
-          git commit -m "docs(changelog): update changelog" || echo "no changes"
-          git push || echo "nothing/failed to push"
-      - name: Upload CHANGELOG.md artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: changelog
-          path: ./CHANGELOG.md
-
   release:
     runs-on: ubuntu-latest
-    needs: [pytest-coverage, changelog, Validate-CITATION-cff]
+    needs: [pytest-coverage, citation]
     name: Release on GitHub
     steps:
       - uses: actions/checkout@v2
-      - name: Download CHANGELOG.md artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: changelog
       - name: Create incremental changelog
         run: >
           cat CHANGELOG.md 
