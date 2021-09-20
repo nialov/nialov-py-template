@@ -132,7 +132,7 @@ def changelog(c, latest_version=""):
     """
     Generate changelog.
     """
-    c.run(f"nox --session changelog {latest_version}")
+    c.run(f"nox --session changelog -- {latest_version}")
 
 
 @task(
