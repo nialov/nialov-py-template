@@ -153,7 +153,29 @@ def prepush(_):
     """
 
 
-@task(pre=[prepush])
+@task
+def pre_commit(c, only_run=False, only_install=False):
+    """
+    Verify that pre-commit is installed, install its hooks and run them.
+    """
+    cmd = "pre-commit --help"
+    try:
+        c.run(cmd, hide=True)
+    except Exception:
+        print(f"Could not run '{cmd}'. Make sure pre-commit is installed.")
+        raise
+
+    if not only_run:
+        c.run("pre-commit install")
+        c.run("pre-commit install --hook-type commit-msg")
+        print("Hooks installed!")
+
+    if not only_install:
+        print("Running on all files.")
+        c.run("pre-commit run --all-files")
+
+
+@task(pre=[prepush], post=[pre_commit])
 def tag(c, tag="", annotation=""):
     """
     Make new tag and update version strings accordingly
@@ -197,7 +219,7 @@ def tag(c, tag="", annotation=""):
         "# Run pre-commit to check files.",
         "pre-commit run --all-files",
         "git add .",
-        "# Make sure only version updates are committed!"
+        "# Make sure only version updates are committed!",
         "git commit -m 'docs: update version'",
         "# Make sure tag is proper!",
         f"git tag -a v{tag} -m '{annotation}'",
@@ -205,28 +227,6 @@ def tag(c, tag="", annotation=""):
     print("Not running git cmds. See below for suggested commands:\n---\n")
     for cmd in cmds:
         print(cmd)
-
-
-@task
-def pre_commit(c, only_run=False, only_install=False):
-    """
-    Verify that pre-commit is installed, install its hooks and run them.
-    """
-    cmd = "pre-commit --help"
-    try:
-        c.run(cmd, hide=True)
-    except Exception:
-        print(f"Could not run '{cmd}'. Make sure pre-commit is installed.")
-        raise
-
-    if not only_run:
-        c.run("pre-commit install")
-        c.run("pre-commit install --hook-type commit-msg")
-        print("Hooks installed!")
-
-    if not only_install:
-        print("Running on all files.")
-        c.run("pre-commit run --all-files")
 
 
 @task(
