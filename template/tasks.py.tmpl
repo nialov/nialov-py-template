@@ -172,7 +172,10 @@ def pre_commit(c, only_run=False, only_install=False):
 
     if not only_install:
         print("Running on all files.")
-        c.run("pre-commit run --all-files")
+        try:
+            c.run("pre-commit run --all-files")
+        except Exception:
+            print("pre-commit run formatted files!")
 
 
 @task(pre=[prepush], post=[pre_commit])
