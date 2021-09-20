@@ -159,18 +159,14 @@ jobs:
         run: |
           git checkout master
           git pull
-      - name: Install auto-changelog from own repo and pandoc
+      - name: Install invoke, nox and pandoc
         run: |
           python -m pip install --upgrade pip
-          pip install git+https://github.com/nialov/auto-changelog.git
+          pip install invoke nox
           sudo apt install pandoc
       - name: Update changelog using auto-changelog
         run: >
-          auto-changelog --tag-prefix 'v' --stdout --unreleased
-          --latest-version="${{ steps.current_tag.outputs.tag }}"
-          | sed -e 'G;' 
-          | pandoc --from markdown --to markdown
-          > CHANGELOG.md
+          invoke changelog
       - name: Echo CHANGELOG.md for debugging
         run: cat CHANGELOG.md
       - name: Commit CHANGELOG.md if processing tag
