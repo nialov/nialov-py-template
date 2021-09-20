@@ -4,7 +4,6 @@ Nox test suite.
 from pathlib import Path
 from shutil import rmtree
 from typing import List
-import subprocess
 
 import nox
 
@@ -447,5 +446,6 @@ def changelog(session):
             CHANGELOG_MD_NAME,
             external=True,
         )
+    print(changelog_path.read_text())
 
     assert changelog_path.exists()
