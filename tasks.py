@@ -5,8 +5,8 @@ from invoke import task
 
 
 @task
-def test(c):
+def test(c, posargs=""):
     """
     Test template with scaffold Python project.
     """
-    c.run("nox --session test")
+    c.run(f"nox --session test -- {posargs}")

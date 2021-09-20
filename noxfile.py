@@ -9,11 +9,19 @@ from shutil import copytree
 TEMPLATE_DIR_NAME = "test_template"
 CITATION_CFF = Path("CITATION.cff")
 
+MAKE = "make"
+PRE_COMMIT = "pre-commit"
+CHANGELOG = "changelog"
+TAG = "tag"
+UPDATE_VERSION = "update-version"
 
-@nox.session(python="3.8")
-def test(session: nox.Session):
+
+DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG, UPDATE_VERSION]
+
+
+def initialize(session):
     """
-    Test template with nox session.
+    Initialize testing.
     """
     # Install dependencies
     session.install("poetry", "copier", "pre-commit")
@@ -45,6 +53,11 @@ def test(session: nox.Session):
     # rm any existing poetry venv
     session.run("poetry", "env", "remove", "python", success_codes=[0, 1])
 
+
+def test_precommit(session):
+    """
+    Test pre-commit.
+    """
     # Initialize pre-commit
     session.run("pre-commit", "install")
     session.run("pre-commit", "install", "--hook-type", "commit-msg")
@@ -87,17 +100,31 @@ def test(session: nox.Session):
     # Test pre_commit task
     session.run("poetry", "run", "invoke", "pre-commit")
 
-    # Install with poetry
-    session.run("poetry", "install")
 
+def test_make(session):
+    """
+    Test invoke make.
+    """
+    # Run tests that come from copier template files
+    session.run("poetry", "run", "invoke", "make")
+
+
+def test_update_version(session):
+    """
+    Test invoke update-version.
+    """
     # Update the local pyproject.toml file version
     session.run("poetry", "run", "invoke", "update-version")
 
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text()
 
+
+def test_tag(session, tag: str):
+    """
+    Test invoke tag.
+    """
     # Update the all project strings with own script
-    tag = "v0.0.5"
     session.run(
         "poetry", "run", "invoke", "tag", f"--tag={tag}", "--annotation='Annotated!'"
     )
@@ -108,15 +135,56 @@ def test(session: nox.Session):
         for path in ("pyproject.toml", "CITATION.cff", "mypackage/__init__.py")
     )
 
-    # Run tests that come from copier template files
-    session.run("poetry", "run", "invoke", "make")
-
     # Check that CITATION.cff exists and is not empty
     assert CITATION_CFF.exists() and len(CITATION_CFF.read_text()) > 10
 
+
+def test_changelog(session, tag: str):
+    """
+    Test invoke changelog.
+    """
     # Generate changelog locally
     session.run("poetry", "run", "invoke", "changelog")
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
     assert changelog_path.exists() and len(changelog_path.read_text()) > 0
+
+    # Generate changelog locally with certain version as latest
+    session.run("poetry", "run", "invoke", "changelog", f"--latest-version={tag}")
+
+    # Check that changelog exists and is non-empty
+    changelog_path = Path("CHANGELOG.md")
+    assert changelog_path.exists() and len(changelog_path.read_text()) > 0
+
+
+@nox.session(python="3.8")
+def test(session: nox.Session):
+    """
+    Test template with nox session.
+    """
+    if session.posargs is not None and len(session.posargs) > 0:
+        dispatch_strs = session.posargs
+        assert all(arg in DISPATCH_STRS for arg in dispatch_strs)
+    else:
+        dispatch_strs = DISPATCH_STRS
+
+    initialize(session=session)
+
+    if PRE_COMMIT in dispatch_strs:
+        test_precommit(session=session)
+
+    # Install with poetry
+    session.run("poetry", "install")
+
+    if MAKE in dispatch_strs:
+        test_make(session=session)
+
+    if UPDATE_VERSION in dispatch_strs:
+        test_update_version(session=session)
+
+    tag = "v0.0.5"
+    if TAG in dispatch_strs:
+        test_tag(session=session, tag=tag)
+    if CHANGELOG in dispatch_strs:
+        test_changelog(session=session, tag=tag)
