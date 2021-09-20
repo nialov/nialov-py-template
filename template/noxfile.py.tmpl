@@ -391,10 +391,23 @@ def validate_citation_cff(session):
 
 
 @nox.session(reuse_venv=True)
-def changelog(session, latest_version=""):
+def changelog(session):
     """
     Create CHANGELOG.md.
     """
+    if session.posargs:
+        if isinstance(session.posargs, str):
+            version = session.posargs
+        elif isinstance(session.posargs, (tuple, list)):
+            version = session.posargs[0]
+        else:
+            raise TypeError(
+                f"Expected (str,tuple,list) as posargs type. Got: {type(session.posargs)}"
+                f" with contents: {session.posargs}."
+            )
+    else:
+        version = ""
+    assert isinstance(version, str)
     # Path to changelog.md
     changelog_path = Path(CHANGELOG_MD_NAME).absolute()
 
@@ -412,9 +425,7 @@ def changelog(session, latest_version=""):
         "auto-changelog",
         "--tag-prefix=v",
         f"--output={CHANGELOG_MD_NAME}",
-        f"--latest-version={latest_version}"
-        if len(latest_version) > 0
-        else "--unreleased",
+        f"--latest-version={version}" if len(version) > 0 else "--unreleased",
     )
 
     # Add empty lines after each line of changelog
