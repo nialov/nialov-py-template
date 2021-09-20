@@ -395,21 +395,26 @@ def changelog(session):
     """
     Create CHANGELOG.md.
     """
+    # Path to changelog.md
+    changelog_path = Path(CHANGELOG_MD_NAME).absolute()
+
+    # Check if pandoc is installed
     pandoc_installed = True
     try:
-        session.run("pandoc", "--help")
+        session.run("pandoc", "--help", external=True)
     except Exception:
         pandoc_installed = False
         print("Expected 'pandoc' to be installed. Cannot generate clean changelog.")
 
+    # Install auto-changelog from own repo
     session.install("git+https://github.com/nialov/auto-changelog.git")
     changelog_output = subprocess.check_output(
-        (
+        [
             "auto-changelog",
-            "--tag-prefix",
-            "v" "--stdout",
+            "--tag-prefix=v",
+            "--stdout",
             "--unreleased",
-        ),
+        ]
     )
 
     # Add empty lines after each line of changelog
@@ -418,20 +423,18 @@ def changelog(session):
         new_lines.append(line)
         new_lines.append("")
 
-    Path(CHANGELOG_MD_NAME).write_text("\n".join(new_lines))
+    changelog_path.write_text("\n".join(new_lines))
     if pandoc_installed:
-        subprocess.check_call(
-            (
-                "pandoc",
-                CHANGELOG_MD_NAME,
-                "--from",
-                "markdown",
-                "--to",
-                "markdown",
-                "--output",
-                CHANGELOG_MD_NAME,
-            )
+        session.run(
+            "pandoc",
+            CHANGELOG_MD_NAME,
+            "--from",
+            "markdown",
+            "--to",
+            "markdown",
+            "--output",
+            CHANGELOG_MD_NAME,
+            external=True,
         )
-    # Path to changelog.md
-    changelog_path = Path(CHANGELOG_MD_NAME).absolute()
+
     assert changelog_path.exists()
