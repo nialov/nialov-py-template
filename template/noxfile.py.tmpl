@@ -411,17 +411,14 @@ def changelog(session):
             "--unreleased",
         ),
     )
-    Path(CHANGELOG_MD_NAME).write_text(changelog_output.decode("utf-8"))
 
-    sed_output = subprocess.check_output(
-        (
-            "sed",
-            "-e",
-            "G;",
-            CHANGELOG_MD_NAME,
-        ),
-    )
-    Path(CHANGELOG_MD_NAME).write_text(sed_output.decode("utf-8"))
+    # Add empty lines after each line of changelog
+    new_lines = []
+    for line in changelog_output.decode("utf-8").splitlines():
+        new_lines.append(line)
+        new_lines.append("")
+
+    Path(CHANGELOG_MD_NAME).write_text("\n".join(new_lines))
     if pandoc_installed:
         subprocess.check_call(
             (
