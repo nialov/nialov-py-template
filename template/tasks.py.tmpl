@@ -164,7 +164,7 @@ def tag(c, tag="", annotation=""):
         raise ValueError("Annotation string must be specified with '--annotation=*'.")
 
     # Create changelog with 'tag' as latest version
-    c.run(f"nox --session changelog {tag}")
+    c.run(f"nox --session changelog -- {tag}")
 
     # Remove v at the start of tag
     tag = tag if "v" not in tag else tag[1:]
