@@ -391,7 +391,7 @@ def validate_citation_cff(session):
 
 
 @nox.session(reuse_venv=True)
-def changelog(session):
+def changelog(session, latest_version=""):
     """
     Create CHANGELOG.md.
     """
@@ -408,18 +408,18 @@ def changelog(session):
 
     # Install auto-changelog from own repo
     session.install("git+https://github.com/nialov/auto-changelog.git")
-    changelog_output = subprocess.check_output(
-        [
-            "auto-changelog",
-            "--tag-prefix=v",
-            "--stdout",
-            "--unreleased",
-        ]
+    session.run(
+        "auto-changelog",
+        "--tag-prefix=v",
+        f"--output={CHANGELOG_MD_NAME}",
+        f"--latest-version={latest_version}"
+        if len(latest_version) > 0
+        else "--unreleased",
     )
 
     # Add empty lines after each line of changelog
     new_lines = []
-    for line in changelog_output.decode("utf-8").splitlines():
+    for line in changelog_path.read_text().splitlines():
         new_lines.append(line)
         new_lines.append("")
 

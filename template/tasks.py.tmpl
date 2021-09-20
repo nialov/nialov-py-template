@@ -128,11 +128,14 @@ def citation(c):
 
 
 @task
-def changelog(c):
+def changelog(c, latest_version=""):
     """
     Generate changelog.
     """
-    c.run("nox --session changelog")
+    latest_version_arg = (
+        f"--latest-version={latest_version}" if len(latest_version) > 0 else ""
+    )
+    c.run(f"nox --session changelog {latest_version_arg}")
 
 
 @task(
