@@ -4,6 +4,7 @@ Nox test suite.
 from pathlib import Path
 from shutil import rmtree
 from typing import List
+import subprocess
 
 import nox
 
@@ -402,30 +403,38 @@ def changelog(session):
         print("Expected 'pandoc' to be installed. Cannot generate clean changelog.")
 
     session.install("git+https://github.com/nialov/auto-changelog.git")
-    session.run(
-        "auto-changelog",
-        "--tag-prefix",
-        "v" "--stdout",
-        "--unreleased",
-        "|",
-        "sed",
-        "-e",
-        "G;" "|",
-        *(
+    changelog_output = subprocess.check_output(
+        (
+            "auto-changelog",
+            "--tag-prefix",
+            "v" "--stdout",
+            "--unreleased",
+        ),
+    )
+    Path(CHANGELOG_MD_NAME).write_text(changelog_output.decode("utf-8"))
+
+    sed_output = subprocess.check_output(
+        (
+            "sed",
+            "-e",
+            "G;" "|",
+            CHANGELOG_MD_NAME,
+        ),
+    )
+    Path(CHANGELOG_MD_NAME).write_text(sed_output.decode("utf-8"))
+    if pandoc_installed:
+        subprocess.check_call(
             (
                 "pandoc",
+                CHANGELOG_MD_NAME,
                 "--from",
                 "markdown",
                 "--to",
                 "markdown",
+                "--output",
+                CHANGELOG_MD_NAME,
             )
-            if pandoc_installed
-            else ("",)
-        ),
-        ">",
-        "CHANGELOG.md",
-        external=True,
-    )
+        )
     # Path to changelog.md
     changelog_path = Path(CHANGELOG_MD_NAME).absolute()
     assert changelog_path.exists()
