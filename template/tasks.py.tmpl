@@ -136,7 +136,16 @@ def changelog(c):
 
 
 @task(
-    pre=[requirements, update_version, format_and_lint, ci_test, build, docs, citation]
+    pre=[
+        requirements,
+        update_version,
+        format_and_lint,
+        ci_test,
+        build,
+        docs,
+        citation,
+        changelog,
+    ]
 )
 def prepush(_):
     """
