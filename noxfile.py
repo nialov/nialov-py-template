@@ -113,3 +113,10 @@ def test(session: nox.Session):
 
     # Check that CITATION.cff exists and is not empty
     assert CITATION_CFF.exists() and len(CITATION_CFF.read_text()) > 10
+
+    # Generate changelog locally
+    session.run("poetry", "run", "invoke", "changelog")
+
+    # Check that changelog exists and is non-empty
+    changelog_path = Path("CHANGELOG.md")
+    assert changelog_path.exists() and len(changelog_path.read_text()) > 0
