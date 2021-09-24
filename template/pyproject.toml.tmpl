@@ -21,7 +21,7 @@ classifiers = [
 include = ["CHANGELOG.md"]
 
 [tool.poetry.scripts]
-[[ package ]] = "[[ package ]].cli:app"
+[[ package|replace('_', '-') ]] = "[[ package ]].cli:app"
 
 [tool.poetry.dependencies]
 python = "^3.8"
