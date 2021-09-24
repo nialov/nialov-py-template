@@ -14,6 +14,7 @@ PRE_COMMIT = "pre-commit"
 CHANGELOG = "changelog"
 TAG = "tag"
 UPDATE_VERSION = "update-version"
+UTF8 = "utf-8"
 
 
 DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG, UPDATE_VERSION]
@@ -117,7 +118,7 @@ def test_update_version(session):
     session.run("poetry", "run", "invoke", "update-version")
 
     # Version should be updated by poetry-dynamic-versioning
-    assert "0.0.0\n" not in Path("pyproject.toml").read_text()
+    assert "0.0.0\n" not in Path("pyproject.toml").read_text(UTF8)
 
 
 def test_tag(session, tag: str):
@@ -131,12 +132,12 @@ def test_tag(session, tag: str):
 
     # Version should be updated
     assert all(
-        tag[1:] in Path(path).read_text()
+        tag[1:] in Path(path).read_text(UTF8)
         for path in ("pyproject.toml", "CITATION.cff", "mypackage/__init__.py")
     )
 
     # Check that CITATION.cff exists and is not empty
-    assert CITATION_CFF.exists() and len(CITATION_CFF.read_text()) > 10
+    assert CITATION_CFF.exists() and len(CITATION_CFF.read_text(UTF8)) > 10
 
 
 def test_changelog(session, tag: str):
@@ -148,14 +149,14 @@ def test_changelog(session, tag: str):
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
-    assert changelog_path.exists() and len(changelog_path.read_text()) > 0
+    assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
 
     # Generate changelog locally with certain version as latest
     session.run("poetry", "run", "invoke", "changelog", f"--latest-version={tag}")
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
-    assert changelog_path.exists() and len(changelog_path.read_text()) > 0
+    assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
 
 
 @nox.session(python="3.8")

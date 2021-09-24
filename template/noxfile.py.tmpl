@@ -9,6 +9,7 @@ import nox
 
 # Variables
 PACKAGE_NAME = "[[ package ]]"
+UTF8 = "utf-8"
 
 # Paths
 DOCS_SRC_PATH = Path("docs_src")
@@ -101,7 +102,7 @@ def tests_pip(session):
     session.run("coverage-badge", "-o", str(COVERAGE_SVG_PATH))
 
     # Test that entrypoint works.
-    session.run(PACKAGE_NAME, "--help")
+    session.run(PACKAGE_NAME.replace("_", "-"), "--help")
 
 
 @nox.session(python=PYTHON_VERSIONS)
@@ -429,11 +430,11 @@ def changelog(session):
 
     # Add empty lines after each line of changelog
     new_lines = []
-    for line in changelog_path.read_text().splitlines():
+    for line in changelog_path.read_text(UTF8).splitlines():
         new_lines.append(line)
         new_lines.append("")
 
-    changelog_path.write_text("\n".join(new_lines))
+    changelog_path.write_text("\n".join(new_lines), encoding=UTF8)
     if pandoc_installed:
         session.run(
             "pandoc",
@@ -446,6 +447,6 @@ def changelog(session):
             CHANGELOG_MD_NAME,
             external=True,
         )
-    print(changelog_path.read_text())
+    print(changelog_path.read_text(UTF8))
 
     assert changelog_path.exists()
