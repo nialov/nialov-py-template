@@ -4,7 +4,7 @@ authors:
 [% set given_name, family_name = full_name.split(' ') %]
 - family-names: [[ family_name ]]
   given-names: [[ given_name ]]
-title: [[ package ]]
+title: "[[ package|replace('_', '-') ]]"
 version: "0.0.0"
 date-released: "[[ year ]]-01-01"
 keywords:
