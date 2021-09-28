@@ -65,11 +65,12 @@ License
 
 Copyright © [[ year ]], [[ full_name ]].
 
-.. |Documentation Status| image:: https://readthedocs.org/projects/[[ package ]]/badge/?version=latest
-   :target: https://[[ package ]].readthedocs.io/en/latest/?badge=latest
-.. |PyPI Status| image:: https://img.shields.io/pypi/v/[[ package ]].svg
-   :target: https://pypi.python.org/pypi/[[ package ]]
-.. |CI Test| image:: https://github.com/[[ github_account ]]/[[ package ]]/workflows/test-and-publish/badge.svg
-   :target: https://github.com/[[ github_account ]]/[[ package ]]/actions/workflows/test-and-publish.yaml?query=branch%3Amaster
-.. |Coverage| image:: https://raw.githubusercontent.com/[[ github_account ]]/[[ package ]]/master/docs_src/imgs/coverage.svg
-   :target: https://github.com/[[ github_account ]]/[[ package ]]/blob/master/docs_src/imgs/coverage.svg
+[% set package_with_dash = package.replace('_', '-') %]
+.. |Documentation Status| image:: https://readthedocs.org/projects/[[ package_with_dash ]]/badge/?version=latest
+   :target: https://[[ package_with_dash ]].readthedocs.io/en/latest/?badge=latest
+.. |PyPI Status| image:: https://img.shields.io/pypi/v/[[ package_with_dash ]].svg
+   :target: https://pypi.python.org/pypi/[[ package_with_dash ]]
+.. |CI Test| image:: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/workflows/test-and-publish/badge.svg
+   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/actions/workflows/test-and-publish.yaml?query=branch%3Amaster
+.. |Coverage| image:: https://raw.githubusercontent.com/[[ github_account ]]/[[ package_with_dash ]]/master/docs_src/imgs/coverage.svg
+   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/blob/master/docs_src/imgs/coverage.svg
