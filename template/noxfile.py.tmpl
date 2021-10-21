@@ -70,7 +70,7 @@ def install_dev(session, extras: str = ""):
     session.install("-r", DEV_REQUIREMENTS)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def tests_pip(session):
     """
     Run test suite with pip install.
