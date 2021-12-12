@@ -468,10 +468,3 @@ def changelog(session):
     print(changelog_path.read_text(UTF8))
 
     assert changelog_path.exists()
-
-
-@nox.session(reuse_venv=True, **VENV_PARAMS)
-def changelog(session):
-    """
-    Start sphinx-autobuild watcher for documentation.
-    """
