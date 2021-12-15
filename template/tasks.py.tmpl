@@ -139,6 +139,14 @@ def changelog(c, latest_version=""):
     c.run(f"nox --session changelog -- {latest_version}")
 
 
+@task
+def codespell(c):
+    """
+    Check code spelling.
+    """
+    c.run("nox --session codespell")
+
+
 @task(
     pre=[
         requirements,
@@ -149,6 +157,7 @@ def changelog(c, latest_version=""):
         docs,
         citation,
         changelog,
+        codespell,
     ]
 )
 def prepush(_):

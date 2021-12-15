@@ -468,3 +468,12 @@ def changelog(session):
     print(changelog_path.read_text(UTF8))
 
     assert changelog_path.exists()
+
+
+@nox.session(reuse_venv=True, **VENV_PARAMS)
+def codespell(session):
+    """
+    Check spelling in code.
+    """
+    session.install("codespell")
+    session.run("codespell", PACKAGE_NAME, DOCS_EXAMPLES)
