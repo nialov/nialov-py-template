@@ -258,6 +258,7 @@ def _docs(session, auto_build: bool):
             "./docs",
             "-b",
             "html",
+            "--open-browser" if auto_build else "",
         )
 
     finally:
