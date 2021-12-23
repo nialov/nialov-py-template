@@ -9,31 +9,59 @@ Highly opinionated and made for personal use.
 Short description of functionality
 ----------------------------------
 
--  Testing framework based on ``invoke`` and ``nox``.
--  Testing done with ``pytest``, and code ``coverage`` is checked.
+-  Testing framework based on `invoke <https://github.com/pyinvoke/invoke>`__
+   and `nox <https://github.com/theacodes/nox>`__.
 
-   -  ``coverage-badge`` is currently locally generated for use in
-      ``README.rst``.
+   -  Allows replication of continous integration (=ci) tests locally.
 
--  Documentation with ``sphinx``, theme ``sphinx-rtd-theme``.
--  Contains GitHub Actions that call the aforementioned test framework
-   (``pytest-coverage`` and ``format-lint``).
+   -  Continuous integration is conducted with ``GitHub Actions``.
 
-   -  By default an
-      `action <https://github.com/pypa/gh-action-pypi-publish>`__ exists
-      that will push to PyPI on tagged commits. However this requires a
-      ``PYPI_PASSWORD`` API token to work.
-   -  Non-tagged commits simply try building the package without pushing
-      anywhere.
+   -  In ci, ``invoke`` tasks ``ci-test``, ``format-and-lint``, ``docs``,
+      ``citation`` and ``build`` are called.
 
-Running tests
--------------
+      -  Note that ``docs`` are hosted on ``ReadTheDocs``, the task is only ran
+         to test the building with task that mimigs ``ReadTheDocs``.
+
+      -  An
+         `action <https://github.com/pypa/gh-action-pypi-publish>`__ exists
+         that will push to PyPI on tagged commits.
+
+         -  However this requires a ``PYPI_PASSWORD`` API token to work.
+
+         -  See ``build-and-publish`` job in workflow file.
+
+      -  Non-tagged commits simply try building the package without pushing
+         anywhere.
+
+-  Testing of code is done with `pytest
+   <https://github.com/pytest-dev/pytest>`__.
+
+   -  Code `coverage <https://github.com/nedbat/coveragepy>`__ is checked.
+
+   -  `coverage-badge <https://pypi.org/project/coverage-badge/>`__ is
+      currently locally generated for use in ``README.rst``.
+
+-  Documentation is generated with 
+   `sphinx <https://github.com/sphinx-doc/sphinx>`__
+
+   -  Documentation theme is `sphinx-rtd-theme
+      <https://github.com/readthedocs/sphinx_rtd_theme>`__.
+
+   -  Hosted on ``ReadTheDocs``
+
+      -  Requires user setup at https://readthedocs.org/
+
+Template Development
+--------------------
 
 Run tests for the template with:
 
 .. code:: bash
 
+   # Install with poetry
+   poetry install
+   # Run tests
    poetry run invoke test
 
-Testing uses another, scaffolded Python project at ``test_template``
+Testing uses another, scaffolded Python project in ``./test_template/``
 directory.
