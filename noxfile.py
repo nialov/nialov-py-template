@@ -98,9 +98,6 @@ def test_precommit(session):
     # Check all files with pre-commit
     session.run("pre-commit", "run", "--all-files")
 
-    # Test pre_commit task
-    session.run("poetry", "run", "doit", "pre_commit")
-
 
 def test_make(session):
     """
@@ -115,7 +112,7 @@ def test_update_version(session):
     Test doit update-version.
     """
     # Update the local pyproject.toml file version
-    session.run("poetry", "run", "doit", "update-version")
+    session.run("poetry", "run", "doit", "update_version")
 
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text(UTF8)
