@@ -9,7 +9,6 @@ python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 nox = "*"
-invoke = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]

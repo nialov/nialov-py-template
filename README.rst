@@ -9,14 +9,14 @@ Highly opinionated and made for personal use.
 Short description of functionality
 ----------------------------------
 
--  Testing framework based on `invoke <https://github.com/pyinvoke/invoke>`__
+-  Testing framework based on `doit <https://github.com/pydoit/doit>`__
    and `nox <https://github.com/theacodes/nox>`__.
 
    -  Allows replication of continous integration (=ci) tests locally.
 
    -  Continuous integration is conducted with ``GitHub Actions``.
 
-   -  In ci, ``invoke`` tasks ``ci-test``, ``format-and-lint``, ``docs``,
+   -  In ci, ``doit`` tasks ``ci-test``, ``format-and-lint``, ``docs``,
       ``citation`` and ``build`` are called.
 
       -  Note that ``docs`` are hosted on ``ReadTheDocs``, the task is only ran
@@ -61,7 +61,7 @@ Run tests for the template with:
    # Install with poetry
    poetry install
    # Run tests
-   poetry run invoke test
+   poetry run nox --session test # -- optional posargs to limit testing
 
 Testing uses another, scaffolded Python project in ``./test_template/``
 directory.

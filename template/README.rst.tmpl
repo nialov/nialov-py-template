@@ -16,17 +16,25 @@ To run full extensive test suite:
 
 .. code:: bash
 
-   poetry run invoke test
+   poetry run doit
+   # Add -n <your-cpu-core-count> to execute tasks in parallel
+   # E.g.
+   poetry run doit -n 8 -v 0
+   # -v 0 is added to limit verbosity to mininum (optional)
+   # doit makes sure tasks are run in the correct order
+   # E.g. if a task uses a requirements.txt file that other task produces
+   # the producer is run first even with parallel execution
 
 Formatting and linting
 ----------------------
 
-Formatting and linting is done with a single command. First formats,
-then lints.
+
+Formatting & linting:
 
 .. code:: bash
 
-   poetry run invoke format-and-lint
+   poetry run doit format
+   poetry run doit lint
 
 Building docs
 -------------
@@ -35,23 +43,23 @@ Docs can be built locally to test that ``ReadTheDocs`` can also build them:
 
 .. code:: bash
 
-   poetry run invoke docs
+   poetry run doit docs
 
-Invoke usage
-------------
+doit usage
+----------
 
-To list all available commands from ``tasks.py``:
+To list all available commands from ``dodo.py``:
 
 .. code:: bash
 
-   poetry run invoke --list
+   poetry run doit list
 
 Development
 ~~~~~~~~~~~
 
 Development dependencies include:
 
-   -  invoke
+   -  doit
    -  nox
    -  copier
    -  pytest
