@@ -54,14 +54,15 @@ Short description of functionality
 Template Development
 --------------------
 
-Run tests for the template with:
+Run tests for the template with ``pipx`` or ``nix + pipx``:
 
 .. code:: bash
 
-   # Install with poetry
-   poetry install
-   # Run tests
-   poetry run nox # -- optional posargs to limit testing targets (see noxfile)
+   # With nix (installs all development dependencies automatically)
+   nix develop -c pipx run nox
+   # Without nix but with pipx
+   pipx run nox
 
 Testing uses another, scaffolded Python project in ``./test_template/``
-directory.
+directory. To run tests for supported Python version 3.8 and 3.9 you
+need to have them installed on your system if you do not use ``nix``.
