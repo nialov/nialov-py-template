@@ -61,7 +61,7 @@ Run tests for the template with:
    # Install with poetry
    poetry install
    # Run tests
-   poetry run nox --session test # -- optional posargs to limit testing
+   poetry run nox # -- optional posargs to limit testing targets (see noxfile)
 
 Testing uses another, scaffolded Python project in ``./test_template/``
 directory.
