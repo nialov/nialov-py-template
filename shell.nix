@@ -17,7 +17,7 @@ pkgs.mkShell {
     export GIT_SSL_CAINFO=${cacert}/etc/ssl/certs/ca-bundle.crt
     export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
     export CURL_CA_BUNDLE=${cacert}/etc/ssl/certs/ca-bundle.crt
-    echo Installing pre-commit hooks
-    pre-commit install
+    [[ -a .pre-commit-config.yaml ]] && \
+      echo "Installing pre-commit hooks"; pre-commit install
   '';
 }
