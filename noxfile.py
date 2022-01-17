@@ -99,23 +99,23 @@ def test_precommit(session):
     session.run("pre-commit", "run", "--all-files")
 
     # Test pre_commit task
-    session.run("poetry", "run", "invoke", "pre-commit")
+    session.run("poetry", "run", "doit", "pre-commit")
 
 
 def test_make(session):
     """
-    Test invoke make.
+    Test doit all.
     """
     # Run tests that come from copier template files
-    session.run("poetry", "run", "invoke", "make")
+    session.run("poetry", "run", "doit", "-n", "8", "-v", "0")
 
 
 def test_update_version(session):
     """
-    Test invoke update-version.
+    Test doit update-version.
     """
     # Update the local pyproject.toml file version
-    session.run("poetry", "run", "invoke", "update-version")
+    session.run("poetry", "run", "doit", "update-version")
 
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text(UTF8)
@@ -123,12 +123,10 @@ def test_update_version(session):
 
 def test_tag(session, tag: str):
     """
-    Test invoke tag.
+    Test doit tag.
     """
     # Update the all project strings with own script
-    session.run(
-        "poetry", "run", "invoke", "tag", f"--tag={tag}", "--annotation='Annotated!'"
-    )
+    session.run("poetry", "run", "doit", "tag", f"--tag={tag}")
 
     # Version should be updated
     assert all(
@@ -140,19 +138,12 @@ def test_tag(session, tag: str):
     assert CITATION_CFF.exists() and len(CITATION_CFF.read_text(UTF8)) > 10
 
 
-def test_changelog(session, tag: str):
+def test_changelog(session):
     """
-    Test invoke changelog.
+    Test doit changelog.
     """
     # Generate changelog locally
-    session.run("poetry", "run", "invoke", "changelog")
-
-    # Check that changelog exists and is non-empty
-    changelog_path = Path("CHANGELOG.md")
-    assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
-
-    # Generate changelog locally with certain version as latest
-    session.run("poetry", "run", "invoke", "changelog", f"--latest-version={tag}")
+    session.run("poetry", "run", "doit", "changelog")
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
@@ -188,4 +179,4 @@ def test(session: nox.Session):
     if TAG in dispatch_strs:
         test_tag(session=session, tag=tag)
     if CHANGELOG in dispatch_strs:
-        test_changelog(session=session, tag=tag)
+        test_changelog(session=session)

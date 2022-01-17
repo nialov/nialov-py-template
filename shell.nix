@@ -2,8 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    invoke
-    nox
+    poetry 
     python37
     python38
     python39

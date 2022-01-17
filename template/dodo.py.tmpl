@@ -416,7 +416,6 @@ def use_tag(tag: str):
         print(cmd)
 
 
-# def tag(c, tag="", annotation=""):
 @task_params([{NAME: "tag", "default": "", "type": str, "long": "tag"}])
 def task_tag(tag: str):
     """
