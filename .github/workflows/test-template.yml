@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@v2
       - run: git config --global user.email "actions@github.com"
       - run: git config --global user.name "action"
-      - name: Cache /nix
+        # Both caching /nix/store and .nox are probably inefficient
+        # nix cache pulls from cache.nixos.org are already fast
+      - name: Cache /nix/store
         uses: actions/cache@v2
         with:
           path: /nix/store
