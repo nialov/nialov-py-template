@@ -99,7 +99,7 @@ def test_precommit(session):
     session.run("pre-commit", "run", "--all-files")
 
     # Test pre_commit task
-    session.run("poetry", "run", "doit", "pre-commit")
+    session.run("poetry", "run", "doit", "pre_commit")
 
 
 def test_make(session):
