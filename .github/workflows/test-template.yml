@@ -14,15 +14,9 @@ jobs:
       - uses: actions/checkout@v2
       - run: git config --global user.email "actions@github.com"
       - run: git config --global user.name "action"
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - uses: cachix/install-nix-action@v15
         with:
-          python-version: 3.8
-      - name: Install dependencies
+          nix_path: nixpkgs=channel:nixos-21.11
+      - name: Nox installs depencies including pipx which launches nox
         run: |
-          python -m pip install --upgrade pip
-          pip install nox invoke
-          sudo apt install pandoc
-      - name: Test with invoke which calls nox
-        run: |
-          invoke test
+          nix -Lv develop -c pipx run nox
