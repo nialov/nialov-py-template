@@ -1,10 +1,10 @@
 """
 Nox session tests for template.
 """
-import nox
 from pathlib import Path
 from shutil import copytree
 
+import nox
 
 TEMPLATE_DIR_NAME = "test_template"
 CITATION_CFF = Path("CITATION.cff")
@@ -15,9 +15,12 @@ CHANGELOG = "changelog"
 TAG = "tag"
 UPDATE_VERSION = "update-version"
 UTF8 = "utf-8"
+TEMPLATE_PYTHON = "3.8"
 
 
 DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG, UPDATE_VERSION]
+
+nox.options.error_on_external_run = False
 
 
 def initialize(session):
@@ -25,7 +28,7 @@ def initialize(session):
     Initialize testing.
     """
     # Install dependencies
-    session.install("poetry", "copier", "pre-commit")
+    session.install("copier", "pre-commit")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
@@ -52,7 +55,9 @@ def initialize(session):
     session.run("copier", "--force", "copy", str(current_dir), ".")
 
     # rm any existing poetry venv
-    session.run("poetry", "env", "remove", "python", success_codes=[0, 1])
+    session.run(
+        "poetry", "env", "remove", "python", success_codes=[0, 1], external=True
+    )
 
 
 def test_precommit(session):
@@ -104,7 +109,7 @@ def test_make(session):
     Test doit all.
     """
     # Run tests that come from copier template files
-    session.run("poetry", "run", "doit", "-n", "8", "-v", "0")
+    session.run("poetry", "run", "doit", "-n", "8", "-v", "0", external=True)
 
 
 def test_update_version(session):
@@ -112,7 +117,7 @@ def test_update_version(session):
     Test doit update-version.
     """
     # Update the local pyproject.toml file version
-    session.run("poetry", "run", "doit", "update_version")
+    session.run("poetry", "run", "doit", "update_version", external=True)
 
     # Version should be updated by poetry-dynamic-versioning
     assert "0.0.0\n" not in Path("pyproject.toml").read_text(UTF8)
@@ -123,7 +128,7 @@ def test_tag(session, tag: str):
     Test doit tag.
     """
     # Update the all project strings with own script
-    session.run("poetry", "run", "doit", "tag", f"--tag={tag}")
+    session.run("poetry", "run", "doit", "tag", f"--tag={tag}", external=True)
 
     # Version should be updated
     assert all(
@@ -140,14 +145,14 @@ def test_changelog(session):
     Test doit changelog.
     """
     # Generate changelog locally
-    session.run("poetry", "run", "doit", "changelog")
+    session.run("poetry", "run", "doit", "changelog", external=True)
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
     assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
 
 
-@nox.session(python="3.8")
+@nox.session(python=TEMPLATE_PYTHON)
 def test(session: nox.Session):
     """
     Test template with nox session.
@@ -164,7 +169,7 @@ def test(session: nox.Session):
         test_precommit(session=session)
 
     # Install with poetry
-    session.run("poetry", "install")
+    session.run("poetry", "install", external=True)
 
     if MAKE in dispatch_strs:
         test_make(session=session)
@@ -177,3 +182,11 @@ def test(session: nox.Session):
         test_tag(session=session, tag=tag)
     if CHANGELOG in dispatch_strs:
         test_changelog(session=session)
+
+
+@nox.session(python=TEMPLATE_PYTHON)
+def pre_commit(session: nox.Session):
+    """
+    Run pre-commit on all files.
+    """
+    session.run("pre-commit", "run", "--files", "noxfile.py", external=True)
