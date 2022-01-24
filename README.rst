@@ -16,11 +16,11 @@ Short description of functionality
 
    -  Continuous integration is conducted with ``GitHub Actions``.
 
-   -  In ci, ``doit`` tasks ``ci-test``, ``format-and-lint``, ``docs``,
-      ``citation`` and ``build`` are called.
+   -  Continuous integration tasks are replicable locally with ``doit``
+      tasks defined in ``dodo.py``.
 
-      -  Note that ``docs`` are hosted on ``ReadTheDocs``, the task is only ran
-         to test the building with task that mimigs ``ReadTheDocs``.
+      -  Note that ``docs`` are hosted on ``ReadTheDocs``, the the task is only
+         ran in ci to test the building with task that mimigs ``ReadTheDocs``.
 
       -  An
          `action <https://github.com/pypa/gh-action-pypi-publish>`__ exists
@@ -28,7 +28,7 @@ Short description of functionality
 
          -  However this requires a ``PYPI_PASSWORD`` API token to work.
 
-         -  See ``build-and-publish`` job in workflow file.
+         -  See end of ``doit`` job in workflow file.
 
       -  Non-tagged commits simply try building the package without pushing
          anywhere.
@@ -54,14 +54,27 @@ Short description of functionality
 Template Development
 --------------------
 
-Run tests for the template with ``pipx`` or ``nix + pipx``:
+Run tests for the template with ``poetry`` or ``nix + poetry``:
+
+-  With ``nix + poetry``:
 
 .. code:: bash
 
    # With nix (installs all development dependencies automatically)
-   nix develop -c pipx run nox
-   # Without nix but with pipx
-   pipx run nox
+   # But one dependency is poetry which is used for actual python
+   # dependency management. Therefore poetry install is required to install
+   # python dependencies.
+   nix develop -c poetry install
+   # After python dependencies (including nox) are installed, nox can be ran
+   # to run the template tests.
+   nix develop -c poetry run nox
+
+-  With ``poetry``:
+
+.. code:: bash
+
+   poetry install
+   poetry run nox
 
 Testing uses another, scaffolded Python project in ``./test_template/``
 directory. To run tests for supported Python version 3.8 and 3.9 you
