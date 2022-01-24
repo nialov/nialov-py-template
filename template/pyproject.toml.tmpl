@@ -15,8 +15,8 @@ keywords = [
 ]
 # See https://pypi.org/classifiers/
 classifiers = [
-    "Programming Language :: Python :: 3 :: Only",
-    "[[ classifier ]]"
+    "[[ classifier ]]",
+    "Programming Language :: Python :: 3 :: Only"
 ]
 include = ["CHANGELOG.md"]
 
@@ -51,12 +51,13 @@ isort = {version = "*", optional = true}
 mypy = {version = "*", optional = true}
 
 [tool.poetry.dev-dependencies]
-nox = "*"
 doit = "*"
-jupyterlab = "*"
 ipython = "^7.0"
-pytest = "*"
+jupyterlab = "*"
+nox = "*"
 pre-commit = "*"
+pytest = "*"
+toml = "^0.10.2"
 
 [tool.poetry.extras]
 coverage = ["coverage", "coverage-badge"]
@@ -66,6 +67,7 @@ docs = [
     "nbsphinx",
     "sphinx-gallery",
     "sphinx-autodoc-typehints"
+    "sphinx-autobuild"
 ]
 format-lint = [
     "pylint",
@@ -124,7 +126,7 @@ fail-under = "9.5"
 output-format = "text"
 
 [tool.pylint.messages_control]
-max-line-length = 90
+max-line-length = 100
 disable = [
     "C0103",
     "C0302",

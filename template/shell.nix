@@ -4,7 +4,6 @@ pkgs.mkShell {
   buildInputs = with pkgs; [
     poetry
     python38
-    python38Packages.pipx
     python39
     pre-commit
     pandoc
@@ -20,5 +19,8 @@ pkgs.mkShell {
     export CURL_CA_BUNDLE=${cacert}/etc/ssl/certs/ca-bundle.crt
     [[ -a .pre-commit-config.yaml ]] && \
       echo "Installing pre-commit hooks"; pre-commit install
+    export PYTHONPATH=${python38}/lib/python3.8/site-packages
+    export PYTHONPATH=$PYTHONPATH:${python39}/lib/python3.9/site-packages
+    echo Run poetry install to install environment from poetry.lock
   '';
 }

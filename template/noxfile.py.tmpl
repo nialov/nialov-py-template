@@ -6,26 +6,29 @@ from shutil import rmtree
 from typing import List
 
 import nox
-from dodo import (
-    CHANGELOG_PATH,
-    CITATION_CFF_PATH,
-    COVERAGE_SVG_PATH,
-    DEFAULT_PYTHON_VERSION,
-    DEV_REQUIREMENTS_PATH,
-    DOCS_EXAMPLES_PATH,
-    DOCS_FILES,
-    DOCS_PATH,
-    DOCS_REQUIREMENTS_PATH,
-    DOCS_SRC_PATH,
-    DODO_PATH,
-    NOTEBOOKS,
-    NOXFILE_PATH,
-    PACKAGE_NAME,
-    PYTHON_VERSIONS,
-    README_PATH,
-    TESTS_PATH,
-    UTF8,
-)
+
+CHANGELOG_PATH = Path("CHANGELOG.md")
+CITATION_CFF_PATH = Path("CITATION.cff")
+DOCS_SRC_PATH = Path("docs_src")
+COVERAGE_SVG_PATH = DOCS_SRC_PATH / Path("imgs/coverage.svg")
+DEFAULT_PYTHON_VERSION = "3.8"
+DEV_REQUIREMENTS_PATH = Path("requirements.txt")
+DOCS_EXAMPLES_PATH = Path("examples")
+README_PATH = Path("README.rst")
+DOCS_FILES = [*list(DOCS_SRC_PATH.rglob("*.rst")), README_PATH]
+DOCS_PATH = Path("docs")
+DOCS_REQUIREMENTS_PATH = Path("docs_src/requirements.txt")
+DOCS_SRC_PATH = Path("docs_src")
+DODO_PATH = Path("dodo.py")
+NOTEBOOKS_PATH = DOCS_SRC_PATH / "notebooks"
+NOTEBOOKS = [
+    *list(NOTEBOOKS_PATH.rglob("*.ipynb")),
+]
+NOXFILE_PATH = Path("noxfile.py")
+PACKAGE_NAME = "fractopo"
+PYTHON_VERSIONS = ["3.8", "3.9"]
+TESTS_PATH = Path("tests")
+UTF8 = "utf-8"
 
 DOCS_APIDOC_DIR_PATH = DOCS_SRC_PATH / "apidoc"
 PROFILE_SCRIPT_PATH = Path("tests/_profile.py")
@@ -54,6 +57,11 @@ def execute_notebook(session, notebook: Path):
         "notebook",
         "--inplace",
         "--execute",
+        str(notebook),
+    )
+    # Strip output
+    session.run(
+        "nbstripout",
         str(notebook),
     )
     # Strip output
@@ -165,7 +173,7 @@ def setup_format_and_lint(session) -> List[str]:
     return [str(path) for path in existing_paths]
 
 
-@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
+@nox.session(reuse_venv=True, **VENV_PARAMS)
 def format(session):
     """
     Format python files, notebooks and docs_src.
@@ -381,7 +389,7 @@ def _docs(session, auto_build: bool):
             rmtree(DOCS_AUTO_EXAMPLES_PATH)
 
 
-@nox.session(reuse_venv=True, **VENV_PARAMS)
+@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def docs(session):
     """
     Make documentation.
@@ -391,7 +399,7 @@ def docs(session):
     _docs(session=session, auto_build=False)
 
 
-@nox.session(reuse_venv=True, **VENV_PARAMS)
+@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def auto_docs(session):
     """
     Make documentation and start sphinx-autobuild service.
@@ -399,7 +407,7 @@ def auto_docs(session):
     _docs(session=session, auto_build=True)
 
 
-@nox.session(reuse_venv=True, **VENV_PARAMS)
+@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def update_version(session):
     """
     Update package version from git vcs.
@@ -472,7 +480,7 @@ def typecheck(session):
     session.run("mypy", PACKAGE_NAME)
 
 
-@nox.session(reuse_venv=True, **VENV_PARAMS)
+@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def validate_citation_cff(session):
     """
     Validate CITATION.cff.
@@ -516,7 +524,7 @@ def validate_citation_cff(session):
     )
 
 
-@nox.session(reuse_venv=True, **VENV_PARAMS)
+@nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def changelog(session):
     """
     Create CHANGELOG.md.
