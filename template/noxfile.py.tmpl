@@ -25,7 +25,7 @@ NOTEBOOKS = [
     *list(NOTEBOOKS_PATH.rglob("*.ipynb")),
 ]
 NOXFILE_PATH = Path("noxfile.py")
-PACKAGE_NAME = "fractopo"
+PACKAGE_NAME = "[[ package ]]"
 PYTHON_VERSIONS = ["3.8", "3.9"]
 TESTS_PATH = Path("tests")
 UTF8 = "utf-8"
@@ -375,7 +375,7 @@ def _docs(session, auto_build: bool):
                     "--open-browser",
                     f"--ignore=**/{DOCS_AUTO_EXAMPLES_PATH.name}/**",
                     "--watch=README.rst",
-                    "--watch=fractopo/",
+                    "--watch=f"{PACKAGE_NAME}/",
                     "--watch=examples/",
                 ]
                 if auto_build
