@@ -68,6 +68,9 @@ def test_precommit(session):
     session.run("pre-commit", "install")
     session.run("pre-commit", "install", "--hook-type", "commit-msg")
 
+    # Disable gpg sign
+    session.run("git", "config", "commit.gpgsign", "false")
+
     # Stage and commit all
     # Will check commit hooks
     session.run("git", "add", ".", external=True)

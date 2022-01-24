@@ -9,3 +9,4 @@ dev/
 .hypothesis
 .vim
 .esri.gz
+.direnv
