@@ -15,7 +15,7 @@ CHANGELOG = "changelog"
 TAG = "tag"
 UPDATE_VERSION = "update-version"
 UTF8 = "utf-8"
-TEMPLATE_PYTHON = "3.8"
+TEMPLATE_PYTHONS = ["3.8", "3.9"]
 
 
 DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG, UPDATE_VERSION]
@@ -155,7 +155,7 @@ def test_changelog(session):
     assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
 
 
-@nox.session(python=TEMPLATE_PYTHON)
+@nox.session(python=TEMPLATE_PYTHONS)
 def test(session: nox.Session):
     """
     Test template with nox session.
@@ -187,7 +187,7 @@ def test(session: nox.Session):
         test_changelog(session=session)
 
 
-@nox.session(python=TEMPLATE_PYTHON)
+@nox.session(python=TEMPLATE_PYTHONS[0])
 def pre_commit(session: nox.Session):
     """
     Run pre-commit on all files.
