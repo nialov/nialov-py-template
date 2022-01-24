@@ -25,11 +25,13 @@ pkgs.mkShell rec {
   # PYTHONPATH is overridden with contents from e.g. poetry */site-package.
   # We do not want them to be in PYTHONPATH.
   # Therefore, in ./.envrc PYTHONPATH is set to the _PYTHONPATH defined below
+  # and also in shellHooks (direnv does not load shellHook exports, always).
   _PYTHONPATH = "${PYTHON38PATH}:${python39}/lib/python3.9/site-packages";
 
   shellHook = ''
     [[ -a .pre-commit-config.yaml ]] && \
       echo "Installing pre-commit hooks"; pre-commit install
     echo Run poetry install to install environment from poetry.lock
+    export PYTHONPATH=$_PYTHONPATH
   '';
 }
