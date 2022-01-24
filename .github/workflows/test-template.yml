@@ -16,11 +16,6 @@ jobs:
       - run: git config --global user.name "action"
         # Both caching /nix/store and .nox are probably inefficient
         # nix cache pulls from cache.nixos.org are already fast
-      - name: Cache /nix/store
-        uses: actions/cache@v2
-        with:
-          path: /nix/store
-          key: ${{ runner.os }}-${{ hashFiles('flake.lock') }}-nix-store
       - uses: cachix/install-nix-action@v15
         with:
           nix_path: nixpkgs=channel:nixos-21.11
@@ -29,7 +24,7 @@ jobs:
         with:
           path: .nox
           key: ${{ runner.os }}-${{ hashFiles('noxfile.py') }}-${{ hashFiles('flake.lock') }}-nox
-      - name: Nox installs depencies including pipx which launches nox
+      - name: Poetry installs python dependencies, including nox
         run: |
-          nix -Lv develop -c pipx run nox --version
-          nix -Lv develop -c pipx run nox
+          nix -Lv develop -c poetry install
+          nix -Lv develop -c poetry run nox
