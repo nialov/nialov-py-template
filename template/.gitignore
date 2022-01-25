@@ -154,3 +154,9 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# doit cache
+.doit.db
+
+# direnv cache
+.direnv
