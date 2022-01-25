@@ -1,1 +1,1 @@
-template/flake.nix.tmpl
+template/flake.nix
