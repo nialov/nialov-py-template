@@ -2,7 +2,7 @@
   description = "nix declared development environment";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-21.11";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -18,6 +18,7 @@
           git
           cacert
           stdenv
+          pastel
         ];
 
         # Required for building C extensions
@@ -42,7 +43,9 @@
         shellHook = ''
           [[ -a .pre-commit-config.yaml ]] && \
             echo "Installing pre-commit hooks"; pre-commit install
-          echo Run poetry install to install environment from poetry.lock
+          pastel paint -n green "
+          Run poetry install to install environment from poetry.lock
+          "
           export PYTHONPATH=$_PYTHONPATH
           [[ ! -a .envrc ]] && echo -n "$envrc_contents" > .envrc
         '';
