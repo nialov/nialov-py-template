@@ -160,3 +160,6 @@ cython_debug/
 
 # direnv cache
 .direnv
+
+# direnv rc. it is created by nix develop
+.envrc
