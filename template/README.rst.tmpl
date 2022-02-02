@@ -33,7 +33,7 @@ Formatting & linting:
 
 .. code:: bash
 
-   poetry run doit format
+   poetry run doit pre_commit
    poetry run doit lint
 
 Building docs

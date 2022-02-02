@@ -14,10 +14,20 @@ repos:
         language_version: python3
       - id: black-jupyter
         language_version: python3
+  - repo: https://github.com/asottile/blacken-docs
+    rev: v1.12.1
+    hooks:
+      - id: blacken-docs
+  - repo: https://github.com/keewis/blackdoc
+    rev: v0.3.4
+    hooks:
+      - id: blackdoc
   - repo: https://github.com/pycqa/isort
     rev: 5.10.1
     hooks:
       - id: isort
+        # Skip test_template!!
+        files: "^\\w+\\.py$"
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
     hooks:
