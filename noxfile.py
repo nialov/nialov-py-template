@@ -28,7 +28,9 @@ def initialize(session):
     Initialize testing.
     """
     # Install dependencies
-    session.install("copier", "pre-commit")
+    # TODO: markupsafe is locked due to broken copier with
+    # markupsafe==2.1.0
+    session.install("copier", "pre-commit", "markupsafe==2.0.1")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
