@@ -170,7 +170,6 @@ def setup_lint(session) -> List[str]:
     return [str(path) for path in existing_paths]
 
 
-
 @nox.session(python=DEFAULT_PYTHON_VERSION, reuse_venv=True, **VENV_PARAMS)
 def lint(session):
     """
@@ -192,8 +191,6 @@ def lint(session):
         "pylint",
         *existing_paths,
     )
-
-
 
 
 @nox.session(reuse_venv=True, **VENV_PARAMS)
@@ -431,7 +428,10 @@ def changelog(session):
         print("Expected 'pandoc' to be installed. Cannot generate clean changelog.")
 
     # Install auto-changelog from own repo
-    session.install("git+https://github.com/nialov/auto-changelog.git")
+    # TODO: markupsafe breakage with 2.1.0
+    session.install(
+        "git+https://github.com/nialov/auto-changelog.git", "markupsafe==2.0.1"
+    )
     session.run(
         "auto-changelog",
         "--tag-prefix=v",
