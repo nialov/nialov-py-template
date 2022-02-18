@@ -33,7 +33,16 @@ DOCS_REQUIREMENTS_PATH = Path("docs_src/requirements.txt")
 NOTEBOOKS_PATH = DOCS_SRC_PATH / "notebooks"
 COVERAGE_SVG_PATH = DOCS_SRC_PATH / Path("imgs/coverage.svg")
 README_PATH = Path("README.rst")
-DOCS_FILES = [*list(DOCS_SRC_PATH.rglob("*.rst")), README_PATH]
+# DOCS_FILES = [*list(DOCS_SRC_PATH.rglob("*.rst")), README_PATH]
+DOCS_FILES = [
+    *[
+        path
+        for path in DOCS_SRC_PATH.rglob("*.rst")
+        # Filter out sphinx-gallery files
+        if "auto_examples" not in str(path)
+    ],
+    README_PATH,
+]
 
 ## Build
 DEV_REQUIREMENTS_PATH = Path("requirements.txt")
@@ -219,17 +228,13 @@ def task_notebooks():
 def task_build():
     """
     Build package with poetry.
+
+    Runs always without dependencies or targets.
     """
     command = "nox --session build"
     return {
         ACTIONS: [command],
-        FILE_DEP: [
-            *PYTHON_SRC_FILES,
-            POETRY_LOCK_PATH,
-            NOXFILE_PATH,
-            DODO_PATH,
-        ],
-        TASK_DEP: [resolve_task_name(task_pre_commit)],
+        TASK_DEP: [resolve_task_name(task_pre_commit), resolve_task_name(task_ci_test)],
     }
 
 
@@ -310,6 +315,8 @@ def task_citation():
 def task_changelog():
     """
     Generate changelog.
+
+    Currently only ran when task_tag is called.
     """
     command = "nox --session changelog"
     return {
@@ -407,7 +414,6 @@ def task_tag(tag: str):
     # Create changelog with 'tag' as latest version
     create_changelog = "nox --session changelog -- %(tag)s"
     return {
-        # NAME: "create changelog for tag and update version strings",
         ACTIONS: [create_changelog, use_tag],
     }
 
@@ -424,7 +430,6 @@ DOIT_CONFIG = {
         resolve_task_name(task_notebooks),
         resolve_task_name(task_build),
         resolve_task_name(task_citation),
-        resolve_task_name(task_changelog),
         resolve_task_name(task_codespell),
     ]
 }
