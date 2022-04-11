@@ -55,7 +55,7 @@
             [[ ! -a .envrc ]] && echo -n "$envrc_contents" > .envrc
           '';
         };
-    in (flake-utils.lib.eachDefaultSystem (system:
+    in flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages."${system}";
-      in { devShell = mkshell pkgs; }));
+      in { devShell = mkshell pkgs; });
 }
