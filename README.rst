@@ -2,7 +2,7 @@ Documentation for nialov-py-template
 ====================================
 
 This is a `copier <https://github.com/copier-org/copier>`__ template for
-Python ``3.8`` development.
+Python ``3.8+`` development.
 
 Highly opinionated and made for personal use.
 
@@ -12,15 +12,15 @@ Short description of functionality
 -  Testing framework based on `doit <https://github.com/pydoit/doit>`__
    and `nox <https://github.com/theacodes/nox>`__.
 
-   -  Allows replication of continous integration (=ci) tests locally.
+   -  Allows replication of continuous integration (=ci) tests locally.
 
    -  Continuous integration is conducted with ``GitHub Actions``.
 
    -  Continuous integration tasks are replicable locally with ``doit``
       tasks defined in ``dodo.py``.
 
-      -  Note that ``docs`` are hosted on ``ReadTheDocs``, the the task is only
-         ran in ci to test the building with task that mimigs ``ReadTheDocs``.
+      -  Note that ``docs`` are hosted on ``ReadTheDocs``, the task is only
+         ran in ci to test the building with task that mimics ``ReadTheDocs``.
 
       -  An
          `action <https://github.com/pypa/gh-action-pypi-publish>`__ exists
