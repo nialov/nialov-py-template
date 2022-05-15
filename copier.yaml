@@ -54,7 +54,7 @@ keyword:
   help: A single keyword to get started. Fill the rest in ./pyproject.toml.
   default: data
 
-# Required as long as [[ ]] is used in templating
+# Required as long as [[ ]] is used in templating (copier > 6)
 _envops:
   autoescape: false
   block_end_string: "%]"
@@ -64,3 +64,6 @@ _envops:
   keep_trailing_newline: true
   variable_end_string: "]]"
   variable_start_string: "[["
+
+# copier > 6 compatibility
+_templates_suffix: ".tmpl"
