@@ -53,6 +53,9 @@ def initialize(session):
     # Initialize git repo
     session.run("git", "init", external=True)
 
+    # Disable gpg sign
+    session.run("git", "config", "commit.gpgsign", "false", external=True)
+
     # Run copier
     session.run("copier", "--force", "copy", str(current_dir), ".")
 
