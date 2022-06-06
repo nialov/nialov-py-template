@@ -11,7 +11,7 @@
       mkshell = pkgs:
         let
           poetry-wrapped = pkgs.callPackage ({ writeScriptBin, poetry, stdenv
-            , zlib, cacert, python38, python39, lib }:
+            , zlib, cacert, python38, python39, lib, execline }:
             let
               pythons = [ python38 python39 ];
 
@@ -31,7 +31,7 @@
 
               export PYTHONPATH=${site-packages}
               export PATH=${interpreters}:$PATH
-              exec -a "$0" "${poetry}/bin/poetry" "$@"
+              ${execline}/bin/exec -a "$0" "${poetry}/bin/poetry" "$@"
             '') { };
         in pkgs.mkShell rec {
           packages = with pkgs; [
