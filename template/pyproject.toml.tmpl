@@ -28,7 +28,7 @@ python = "^3.8"
 
 # Extras
 # Coverage
-coverage = {version = "^5.0", optional = true}
+coverage = {version = "*", optional = true}
 coverage-badge = {version = "*", optional = true}
 
 # Docs
@@ -42,7 +42,7 @@ sphinx-autobuild = {version = "*", optional = true}
 # Linting
 pylint = {version = "*", optional = true}
 rstcheck = {version = "*", optional = true}
-markupsafe = {version = "2.0.1", optional = true}
+markupsafe = {version = "*", optional = true}
 
 # Typecheck
 mypy = {version = "*", optional = true}
@@ -51,12 +51,12 @@ mypy = {version = "*", optional = true}
 # TODO: copier could be installed outside the poetry environment
 copier = "*"
 doit = "*"
-ipython = "^7.0"
+ipython = "*"
 jupyterlab = "*"
 nox = "*"
 pre-commit = "*"
 pytest = "*"
-toml = "^0.10.2"
+toml = "*"
 
 [tool.poetry.extras]
 coverage = ["coverage", "coverage-badge"]
