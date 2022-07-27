@@ -24,6 +24,9 @@ jobs:
         with:
           path: .nox
           key: ${{ runner.os }}-${{ hashFiles('noxfile.py') }}-${{ hashFiles('flake.lock') }}-nox
+      - name: Check flake
+        run: |
+          nix -Lv flake check
       - name: Poetry installs python dependencies, including nox
         run: |
           nix -Lv develop -c poetry install
