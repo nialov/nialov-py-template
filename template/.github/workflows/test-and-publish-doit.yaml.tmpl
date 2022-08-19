@@ -62,15 +62,19 @@ jobs:
         run: doit ci_test:${{ matrix.python-version }}
 
   doit:
-    runs-on: ubuntu-latest
     name: Run auxiliary doit tasks to lint and make docs & citation.
+    strategy:
+      matrix:
+        python-version: [3.8]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
     needs: [pytest-coverage-doit]
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 🐍 3.8
+      - name: Set up Python 🐍 ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -98,11 +102,11 @@ jobs:
         # (probably) more efficient to run all here
         # (move efficient for github.com at least)
         run: |
-          doit -n 4 -v 0 pre_commit lint docs citation build
+          doit pre_commit lint docs citation build:${{ matrix.python-version }}
       - name: Publish distribution 📦 to PyPI on tagged commit pushes
         # Publish to PyPI on tagged commit pushes on master
         if: >
-          github.event_name == 'push' 
+          github.event_name == 'push'
           && startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@master
         with:
@@ -117,8 +121,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create incremental changelog
         run: >
-          cat CHANGELOG.md 
-          | sed -n '1,/github/p' 
+          cat CHANGELOG.md
+          | sed -n '1,/github/p'
           > RELEASE_CHANGELOG.md
 
       - name: Echo RELEASE_CHANGELOG.md
@@ -126,7 +130,7 @@ jobs:
 
       - name: Publish release on GitHub
         if: >
-          github.event_name == 'push' 
+          github.event_name == 'push'
           && startsWith(github.ref, 'refs/tags')
         uses: softprops/action-gh-release@v1
         with:
