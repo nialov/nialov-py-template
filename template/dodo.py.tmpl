@@ -164,8 +164,8 @@ def task_ci_test():
     Installs with pip, tests with pytest and checks coverage with coverage.
     """
     # python_version = "" if len(python) == 0 else f"-p {python}"
-    for python_version in PYTHON_VERSIONS:
-        command = f"nox --session tests_pip -p {python_version}"
+    for python_version in ["python38", "python39"]:
+        command = f"nix develop .#{python_version} -c bash -c 'poetry install --no-root && poetry run pytest'"
         yield {
             NAME: python_version,
             FILE_DEP: [
@@ -176,11 +176,6 @@ def task_ci_test():
             ],
             TASK_DEP: [resolve_task_name(task_pre_commit)],
             ACTIONS: [command],
-            **(
-                {TARGETS: [COVERAGE_SVG_PATH]}
-                if python_version == DEFAULT_PYTHON_VERSION
-                else dict()
-            ),
         }
 
 
