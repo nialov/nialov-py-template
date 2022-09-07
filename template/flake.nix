@@ -6,16 +6,16 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, ... }:
     let
       # Create function to generate the poetry-included shell with single
       # input: pkgs
-      poetry-wrapped-generate = pkgs:
+      poetry-wrapped-generate = { pkgs, pythonv }:
         let
           inherit (pkgs) lib;
           # The wanted python interpreters are set here. E.g. if you want to
           # add Python 3.7, add 'python37'.
-          pythons = with pkgs; [ python38 python39 ];
+          pythons = with pkgs; [ pythonv ];
 
           # The paths to site-packages are extracted and joined with a colon
           site-packages = lib.concatStringsSep ":"
@@ -24,6 +24,8 @@
           # The paths to interpreters are extracted and joined with a colon
           interpreters = lib.concatStringsSep ":"
             (lib.forEach pythons (python: "${python}/bin"));
+
+          inherit (pythonv.pkgs) poetry;
 
           # Create a script with the filename poetry so that all "poetry"
           # prefixed commands run the same. E.g. you can use 'poetry run'
@@ -43,15 +45,15 @@
 
           export PYTHONPATH=${site-packages}
           export PATH=${interpreters}:$PATH
-          ${pkgs.execline}/bin/exec -a "$0" "${pkgs.poetry}/bin/poetry" "$@"
+          ${pkgs.execline}/bin/exec -a "$0" "${poetry}/bin/poetry" "$@"
         '';
       # Define the actual development shell that contains the now wrapped
       # poetry executable 'poetry-wrapped'
-      mkshell = pkgs:
+      mkshell = { pkgs, pythonv }:
         let
           # Pass pkgs input to poetry-wrapped-generate function which then
           # returns the poetry-wrapped package.
-          poetry-wrapped = poetry-wrapped-generate pkgs;
+          poetry-wrapped = poetry-wrapped-generate { inherit pkgs pythonv; };
         in pkgs.mkShell {
           # The development environment can contain any tools from nixpkgs
           # alongside poetry Here we add e.g. pre-commit and pandoc
@@ -73,24 +75,42 @@
             Run poetry install to install environment from poetry.lock
             "
             [[ ! -a .envrc ]] && echo -n "$envrc_contents" > .envrc
+            poetry env use ${pythonv.interpreter}
           '';
         };
       # Use flake-utils to declare the development shell for each system nix
       # supports e.g. x86_64-linux and x86_64-darwin (but no guarantees are
       # given that it works except for x86_64-linux, which I use).
     in flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages."${system}";
-      in {
-        devShells.default = mkshell pkgs;
-        checks = {
-          test-poetry-wrapped =
-            let poetry-wrapped = poetry-wrapped-generate pkgs;
-            in pkgs.runCommand "test-poetry-wrapped" { } ''
-              ${poetry-wrapped}/bin/poetry --help
-              ${poetry-wrapped}/bin/poetry init -n
-              ${poetry-wrapped}/bin/poetry check
-              mkdir $out
-            '';
+      let
+        pkgs = nixpkgs.legacyPackages."${system}";
+        poetry-wrapped = poetry-wrapped-generate {
+          inherit pkgs;
+          pythonv = pkgs.python39;
         };
+        pythons = [ "python39" "python310" ];
+        devShells = builtins.foldl' (x: y: pkgs.lib.recursiveUpdate x y) { }
+          (pkgs.lib.forEach pythons (python: {
+            "${python}" = mkshell {
+              inherit pkgs;
+              pythonv = pkgs."${python}";
+            };
+          }));
+        devShellsWithDefault = pkgs.lib.recursiveUpdate devShells {
+          default = devShells."python310";
+        };
+      in {
+        # inherit devShells;
+        checks = {
+          test-poetry-wrapped = pkgs.runCommand "test-poetry-wrapped" { } ''
+            ${poetry-wrapped}/bin/poetry --help
+            ${poetry-wrapped}/bin/poetry init -n
+            ${poetry-wrapped}/bin/poetry check
+            mkdir $out
+          '';
+        };
+        packages.poetry-wrapped = poetry-wrapped;
+        packages.default = poetry-wrapped;
+        devShells = devShellsWithDefault;
       });
 }
