@@ -10,22 +10,25 @@
     let
       # Create function to generate the poetry-included shell with single
       # input: pkgs
-      poetry-wrapped-generate = { pkgs, pythonv }:
+      wrapPoetry = { pkgs, pythonv }:
         let
           inherit (pkgs) lib;
           # The wanted python interpreters are set here. E.g. if you want to
           # add Python 3.7, add 'python37'.
-          pythons = with pkgs; [ pythonv ];
+          pythons = [ pythonv ];
 
-          # The paths to site-packages are extracted and joined with a colon
+          # The paths to site-packages are extracted and joined with a colon.
           site-packages = lib.concatStringsSep ":"
             (lib.forEach pythons (python: "${python}/${python.sitePackages}"));
 
-          # The paths to interpreters are extracted and joined with a colon
+          # The paths to interpreters are extracted and joined with a colon.
           interpreters = lib.concatStringsSep ":"
             (lib.forEach pythons (python: "${python}/bin"));
 
-          inherit (pythonv.pkgs) poetry;
+          # Use latest poetry version from nixpkgs.
+          # The poetry dev shell might use another Python interpreter.
+          # That is set explicitly in the shellHook.
+          inherit (pkgs) poetry;
 
           # Create a script with the filename poetry so that all "poetry"
           # prefixed commands run the same. E.g. you can use 'poetry run'
@@ -49,11 +52,11 @@
         '';
       # Define the actual development shell that contains the now wrapped
       # poetry executable 'poetry-wrapped'
-      mkshell = { pkgs, pythonv }:
+      makeDevShellWithPoetry = { pkgs, pythonv }:
         let
           # Pass pkgs input to poetry-wrapped-generate function which then
           # returns the poetry-wrapped package.
-          poetry-wrapped = poetry-wrapped-generate { inherit pkgs pythonv; };
+          poetry-wrapped = wrapPoetry { inherit pkgs pythonv; };
         in pkgs.mkShell {
           # The development environment can contain any tools from nixpkgs
           # alongside poetry Here we add e.g. pre-commit and pandoc
@@ -68,14 +71,26 @@
           # how to install python dependencies with poetry. Lastly, it
           # generates an '.envrc' file for use with 'direnv' which I recommend
           # using for easy usage of the development shell
-          shellHook = ''
-            [[ -a .pre-commit-config.yaml ]] && \
-              echo "Installing pre-commit hooks"; pre-commit install
-            ${pkgs.pastel}/bin/pastel paint -n green "
-            Run poetry install to install environment from poetry.lock
-            "
-            [[ ! -a .envrc ]] && echo -n "$envrc_contents" > .envrc
-            poetry env use ${pythonv.interpreter}
+          shellHook = let
+            installPrecommit = ''
+              [[ -a .pre-commit-config.yaml ]] && \
+                echo "Installing pre-commit hooks"; pre-commit install '';
+            reportPoetry = ''
+              ${pkgs.pastel}/bin/pastel paint -n green "
+              Run poetry install to install environment from poetry.lock
+              "
+            '';
+            createEnvrc = ''
+              [[ ! -a .envrc ]] && echo -n "$envrc_contents" > .envrc
+            '';
+            setPoetryEnv = ''
+              poetry env use ${pythonv.interpreter}
+            '';
+          in ''
+            ${installPrecommit}
+            ${setPoetryEnv}
+            ${reportPoetry}
+            ${createEnvrc}
           '';
         };
       # Use flake-utils to declare the development shell for each system nix
@@ -84,18 +99,20 @@
     in flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages."${system}";
-        poetry-wrapped = poetry-wrapped-generate {
+        pythons = [ "python39" "python310" ];
+        poetry-wrapped = wrapPoetry {
           inherit pkgs;
           pythonv = pkgs.python39;
         };
-        pythons = [ "python39" "python310" ];
-        devShells = builtins.foldl' (x: y: pkgs.lib.recursiveUpdate x y) { }
+        # Generate devShells for wanted pythons
+        devShells = builtins.foldl' (x: y: (pkgs.lib.recursiveUpdate x y)) { }
           (pkgs.lib.forEach pythons (python: {
-            "${python}" = mkshell {
+            "${python}" = makeDevShellWithPoetry {
               inherit pkgs;
               pythonv = pkgs."${python}";
             };
           }));
+        # Set default python version
         devShellsWithDefault = pkgs.lib.recursiveUpdate devShells {
           default = devShells."python310";
         };
