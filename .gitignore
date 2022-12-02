@@ -10,3 +10,4 @@ dev/
 .vim
 .esri.gz
 .direnv
+.pre-commit-cache/

@@ -30,7 +30,7 @@ def initialize(session):
     # Install dependencies
     # TODO: markupsafe is locked due to broken copier with
     # markupsafe==2.1.0
-    session.install("copier", "markupsafe==2.0.1")
+    # session.install("copier", "markupsafe==2.0.1", "iteration-utilities")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
@@ -57,7 +57,7 @@ def initialize(session):
     session.run("git", "config", "commit.gpgsign", "false", external=True)
 
     # Run copier
-    session.run("copier", "--force", "copy", str(current_dir), ".")
+    session.run("copier", "--force", "copy", str(current_dir), ".", external=True)
 
     # rm any existing poetry venv
     session.run(

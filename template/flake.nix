@@ -4,9 +4,15 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    copier-src = {
+      url = "github:copier-org/copier/precommix";
+      # TODO: copier flake requires specific nixpkgs entries
+      # See: https://github.com/copier-org/copier/blob/51a5bd9878ad036c69ef7e4ae8b0f313bdf180ec/flake.nix
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, copier-src, ... }:
     let
       # Create function to generate the poetry-included shell with single
       # input: pkgs
@@ -75,6 +81,7 @@
             defaultPythonPkg = pkgs.${defaultPython};
             # Install pre-commit hooks
             installPrecommit = ''
+              export PRE_COMMIT_HOME=$(pwd)/.pre-commit-cache
               [[ -a .pre-commit-config.yaml ]] && \
                 echo "Installing pre-commit hooks"; pre-commit install '';
             # Report how to install poetry packages
@@ -105,7 +112,11 @@
     (system:
       let
         # Initialize nixpkgs for system
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays =
+            [ (_: _: { copier = copier-src.packages."${system}".default; }) ];
+        };
 
         # Choose Python interpreters to include in all devShells
         pythons = [ "python38" "python39" "python310" ];
@@ -117,7 +128,12 @@
         wrappedPoetry = wrapPoetry { inherit pkgs pythons; };
 
         # Any packages from nixpkgs can be added here
-        devShellPackages = with pkgs; [ pre-commit pandoc wrappedPoetry ];
+        devShellPackages = with pkgs; [
+          pre-commit
+          pandoc
+          wrappedPoetry
+          copier
+        ];
 
         # Generate devShells for wanted Pythons
         devShells = builtins.foldl' (x: y: (pkgs.lib.recursiveUpdate x y)) { }
