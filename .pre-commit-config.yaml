@@ -3,12 +3,12 @@ repos:
   # Check commit messages on commit
   - repo: https://github.com/commitizen-tools/commitizen
     # Specify tag
-    rev: v2.29.2
+    rev: v2.37.1
     hooks:
       - id: commitizen
         stages: [commit-msg]
   - repo: https://github.com/python/black
-    rev: 22.6.0
+    rev: 22.10.0
     hooks:
       - id: black
         language_version: python3
@@ -26,11 +26,25 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
+        args: ["--profile", "black"]
         # Skip test_template!!
         files: "^\\w+\\.py$"
   - repo: https://github.com/pycqa/flake8
-    rev: 4.0.1
+    rev: 6.0.0
     hooks:
       - id: flake8
-        additional_dependencies: [flake8-docstrings]
+        additional_dependencies:
+          [flake8-docstrings, flake8-bugbear, flake8-bandit]
         files: ^test_template/
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0 # Use the ref you want to point at
+    hooks:
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-yaml
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+        args: ["--maxkb=50000"]

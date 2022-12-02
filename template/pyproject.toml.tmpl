@@ -55,8 +55,11 @@ ipython = "*"
 jupyterlab = "*"
 nox = "*"
 pre-commit = "*"
+pyinstrument = "*"
 pytest = "*"
 toml = "*"
+coverage = "^6.5.0"
+codespell = "^2.2.2"
 
 [tool.poetry.extras]
 coverage = ["coverage", "coverage-badge"]
@@ -77,25 +80,8 @@ lint = [
 typecheck = ["mypy"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-
-[tool.poetry-dynamic-versioning.substitution]
-files = [
-    "*.py",
-    "*/__init__.py",
-    "*/__version__.py",
-    "*/_version.py",
-    "./CITATION.cff",
-]
-patterns = [
-    "(^__version__\\s*=\\s*['\"])[^'\"]*(['\"])",
-    "(^version:\\s*['\"])[^'\"]*(['\"])",
-]
 
 [tool.pytest.ini_options]
 testpaths =[
