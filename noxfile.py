@@ -15,10 +15,10 @@ CHANGELOG = "changelog"
 TAG = "tag"
 UPDATE_VERSION = "update-version"
 UTF8 = "utf-8"
-TEMPLATE_PYTHONS = ["3.8", "3.9"]
+TEMPLATE_PYTHONS = ["3.8", "3.9", "3.10"]
 
 
-DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG, UPDATE_VERSION]
+DISPATCH_STRS = [MAKE, PRE_COMMIT, CHANGELOG, TAG]
 
 nox.options.error_on_external_run = False
 
@@ -30,7 +30,7 @@ def initialize(session):
     # Install dependencies
     # TODO: markupsafe is locked due to broken copier with
     # markupsafe==2.1.0
-    session.install("copier", "pre-commit", "markupsafe==2.0.1")
+    session.install("copier", "markupsafe==2.0.1")
 
     # Save current dir to variable
     current_dir = Path(".").resolve()
@@ -70,8 +70,8 @@ def test_precommit(session):
     Test pre-commit.
     """
     # Initialize pre-commit
-    session.run("pre-commit", "install")
-    session.run("pre-commit", "install", "--hook-type", "commit-msg")
+    session.run("pre-commit", "install", external=True)
+    session.run("pre-commit", "install", "--hook-type", "commit-msg", external=True)
 
     # Disable gpg sign
     session.run("git", "config", "commit.gpgsign", "false", external=True)
@@ -109,7 +109,7 @@ def test_precommit(session):
     )
 
     # Check all files with pre-commit
-    session.run("pre-commit", "run", "--all-files")
+    session.run("pre-commit", "run", "--all-files", external=True)
 
 
 def test_make(session):
@@ -182,8 +182,8 @@ def test(session: nox.Session):
     if MAKE in dispatch_strs:
         test_make(session=session)
 
-    if UPDATE_VERSION in dispatch_strs:
-        test_update_version(session=session)
+    # if UPDATE_VERSION in dispatch_strs:
+    #     test_update_version(session=session)
 
     tag = "v0.0.5"
     if TAG in dispatch_strs:
@@ -192,9 +192,9 @@ def test(session: nox.Session):
         test_changelog(session=session)
 
 
-@nox.session(python=TEMPLATE_PYTHONS[0])
-def pre_commit(session: nox.Session):
-    """
-    Run pre-commit on all files.
-    """
-    session.run("pre-commit", "run", "--files", "noxfile.py", external=True)
+# @nox.session(python=TEMPLATE_PYTHONS[0])
+# def pre_commit(session: nox.Session):
+#     """
+#     Run pre-commit on all files.
+#     """
+#     session.run("pre-commit", "run", "--files", "noxfile.py", external=True)

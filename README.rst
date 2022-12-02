@@ -41,7 +41,7 @@ Short description of functionality
    -  `coverage-badge <https://pypi.org/project/coverage-badge/>`__ is
       currently locally generated for use in ``README.rst``.
 
--  Documentation is generated with 
+-  Documentation is generated with
    `sphinx <https://github.com/sphinx-doc/sphinx>`__
 
    -  Documentation theme is `sphinx-rtd-theme
@@ -77,5 +77,6 @@ Run tests for the template with ``poetry`` or ``nix + poetry``:
    poetry run nox
 
 Testing uses another, scaffolded Python project in ``./test_template/``
-directory. To run tests for supported Python version 3.8 and 3.9 you
-need to have them installed on your system if you do not use ``nix``.
+directory. To run tests for supported Python version 3.8, 3.9 and 3.10
+you need to have them installed on your system if you do not use
+``nix``.
