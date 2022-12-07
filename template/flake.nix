@@ -114,6 +114,7 @@
         # Initialize nixpkgs for system
         pkgs = import nixpkgs {
           inherit system;
+          # Add copier overlay to provide copier package
           overlays =
             [ (_: _: { copier = copier-src.packages."${system}".default; }) ];
         };
