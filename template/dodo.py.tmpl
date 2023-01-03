@@ -221,6 +221,30 @@ def task_apidocs():
     }
 
 
+def task_apidocs():
+    """
+    Make apidoc documentation.
+    """
+    command = "nox --session apidocs"
+    return {
+        ACTIONS: [command],
+        FILE_DEP: [
+            *PYTHON_ALL_FILES,
+            *DOCS_FILES,
+            DOCS_REQUIREMENTS_PATH,
+            NOXFILE_PATH,
+            # DODO_PATH,
+        ],
+        TASK_DEP: [
+            resolve_task_name(task_pre_commit),
+            # resolve_task_name(task_update_version),
+            resolve_task_name(task_lint),
+        ],
+        TARGETS: [DOCS_APIDOC_PATH],
+        UP_TO_DATE: [config_changed(dict(command=command))],
+    }
+
+
 def task_docs():
     """
     Make documentation to docs using nox.
@@ -337,44 +361,6 @@ def update_citation():
         openfile.write("\n".join(new_lines) + "\n")
 
 
-def task_citation():
-    """
-    Sync CITATION.cff.
-    """
-    # Command used to validate CITATION.cff
-    command = "nox --session validate_citation_cff"
-    return {
-        ACTIONS: [update_citation, command],
-        FILE_DEP: [
-            *PYTHON_SRC_FILES,
-            POETRY_LOCK_PATH,
-            NOXFILE_PATH,
-            DODO_PATH,
-        ],
-        TARGETS: [CITATION_CFF_PATH],
-    }
-
-
-def task_changelog():
-    """
-    Generate changelog.
-
-    Currently only ran when task_tag is called.
-    """
-    command = "nox --session changelog"
-    return {
-        ACTIONS: [update_citation, command],
-        FILE_DEP: [
-            *PYTHON_SRC_FILES,
-            POETRY_LOCK_PATH,
-            NOXFILE_PATH,
-            # DODO_PATH,
-        ],
-        TARGETS: [CHANGELOG_PATH],
-        UP_TO_DATE: [config_changed(dict(command=command))],
-    }
-
-
 def task_codespell():
     """
     Check code spelling.
@@ -404,7 +390,7 @@ def parse_tag(tag: str) -> str:
 
 def use_tag(tag: str):
     """
-    Setup new tag in
+    Use tag as version number in files.
     """
     assert len(tag) != 0
     tag = parse_tag(tag)
@@ -465,7 +451,7 @@ def task_tag(tag: str):
     # Create changelog with 'tag' as latest version
     create_changelog = "nox --session changelog -- %(tag)s"
     return {
-        ACTIONS: [create_changelog, use_tag],
+        ACTIONS: [create_changelog, update_citation, use_tag],
     }
 
 
@@ -491,7 +477,6 @@ DOIT_CONFIG = {
         resolve_task_name(task_docs),
         resolve_task_name(task_notebooks),
         resolve_task_name(task_build),
-        resolve_task_name(task_citation),
         resolve_task_name(task_codespell),
     ]
 }

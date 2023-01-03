@@ -24,7 +24,7 @@ include = ["CHANGELOG.md"]
 [[ package|replace('_', '-') ]] = "[[ package ]].cli:app"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.12"
 
 # Extras
 # Coverage
@@ -49,17 +49,19 @@ mypy = {version = "*", optional = true}
 
 [tool.poetry.dev-dependencies]
 # TODO: copier could be installed outside the poetry environment
+codespell = "*"
+cogapp = "==3.3.0"
 copier = "*"
+coverage = "^6.5.0"
 doit = "*"
 ipython = "*"
 jupyterlab = "*"
+nbstripout = "*"
 nox = "*"
 pre-commit = "*"
 pyinstrument = "*"
 pytest = "*"
 toml = "*"
-coverage = "^6.5.0"
-codespell = "^2.2.2"
 
 [tool.poetry.extras]
 coverage = ["coverage", "coverage-badge"]

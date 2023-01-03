@@ -55,7 +55,9 @@ To list all available commands from ``dodo.py``:
    poetry run doit list
 
 Development
-~~~~~~~~~~~
+-----------
+
+-  For general contributing guidelines, see `CONTRIBUTING.rst </CONTRIBUTING>`__
 
 Development dependencies for ``[[ package ]]`` include:
 
@@ -67,7 +69,7 @@ Development dependencies for ``[[ package ]]`` include:
 
       # Use poetry run to execute poetry installed cli tools such as invoke,
       # nox and pytest.
-      poetry run <cmd>
+      poetry run '<cmd>'
 
 
 -  ``doit``
@@ -75,7 +77,7 @@ Development dependencies for ``[[ package ]]`` include:
    -  A general task executor that is a replacement for a ``Makefile``
    -  Understands task dependencies and can run tasks in parallel
       even while running them in the order determined from dependencies
-      between tasks. E.g. requirements.txt is a requirement for running
+      between tasks. E.g., requirements.txt is a requirement for running
       tests and therefore the task creating requirements.txt will always
       run before the test task.
 
@@ -106,7 +108,7 @@ Development dependencies for ``[[ package ]]`` include:
    -  ``copier`` is a project templater. Many Python projects follow a similar
       framework for testing, creating documentations and overall placement of
       files and configuration. ``copier`` allows creating a template project
-      (e.g. https://github.com/nialov/nialov-py-template) which can be firstly
+      (e.g., https://github.com/nialov/nialov-py-template) which can be firstly
       cloned as the framework for your own package and secondly to pull updates
       from the template to your already started project.
 
@@ -164,7 +166,7 @@ Copyright © [[ year ]], [[ full_name ]].
    :target: https://[[ package_with_dash ]].readthedocs.io/en/latest/?badge=latest
 .. |PyPI Status| image:: https://img.shields.io/pypi/v/[[ package_with_dash ]].svg
    :target: https://pypi.python.org/pypi/[[ package_with_dash ]]
-.. |CI Test| image:: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/workflows/test-and-publish/badge.svg
-   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/actions/workflows/test-and-publish.yaml?query=branch%3Amaster
+.. |CI Test| image:: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/workflows/CI/badge.svg
+   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/actions/workflows/main.yaml?query=branch%3Amaster
 .. |Coverage| image:: https://raw.githubusercontent.com/[[ github_account ]]/[[ package_with_dash ]]/master/docs_src/imgs/coverage.svg
    :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/blob/master/docs_src/imgs/coverage.svg

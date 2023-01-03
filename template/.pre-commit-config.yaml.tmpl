@@ -27,7 +27,8 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
-        additional_dependencies: [flake8-docstrings, flake8-bugbear, flake8-bandit]
+        additional_dependencies:
+          [flake8-docstrings, flake8-bugbear, flake8-bandit]
         files: ^[[ package ]]/
   - repo: https://github.com/kynan/nbstripout
     rev: 0.5.0
@@ -49,3 +50,9 @@ repos:
     rev: 1b5af8e280fca562ecabe4c3cae85f9318c03771
     hooks:
       - id: validate-citation-file-format
+  - repo: https://github.com/nialov/cog
+    rev: 6d73562c5cb38753bd94414a6e7612b263bc278d
+    hooks:
+      - id: cog
+        files: "(docs_src/index.rst)"
+        always_run: false

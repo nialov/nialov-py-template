@@ -177,7 +177,8 @@ def test(session: nox.Session):
         test_precommit(session=session)
 
     # Install with poetry
-    session.run("poetry", "install", external=True)
+    session.run("poetry", "lock", "--no-interaction", external=True)
+    session.run("poetry", "install", "--no-interaction", external=True)
 
     if MAKE in dispatch_strs:
         test_make(session=session)
