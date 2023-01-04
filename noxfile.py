@@ -153,7 +153,9 @@ def test_changelog(session):
     Test doit changelog.
     """
     # Generate changelog locally
-    session.run("poetry", "run", "doit", "changelog", external=True)
+    session.run(
+        "poetry", "run", "nox", "--session", "changelog", "--", "v1.0.0", external=True
+    )
 
     # Check that changelog exists and is non-empty
     changelog_path = Path("CHANGELOG.md")
