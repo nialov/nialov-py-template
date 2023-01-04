@@ -147,17 +147,8 @@ def test_tag(session, tag: str):
     # Check that CITATION.cff exists and is not empty
     assert CITATION_CFF.exists() and len(CITATION_CFF.read_text(UTF8)) > 10
 
-
-def test_changelog(session):
-    """
-    Test doit changelog.
-    """
-    # Generate changelog locally
-    session.run(
-        "poetry", "run", "nox", "--session", "changelog", "--", "v1.0.0", external=True
-    )
-
     # Check that changelog exists and is non-empty
+    # 'changelog' nox session is run with tag task
     changelog_path = Path("CHANGELOG.md")
     assert changelog_path.exists() and len(changelog_path.read_text(UTF8)) > 0
 
@@ -191,8 +182,6 @@ def test(session: nox.Session):
     tag = "v0.0.5"
     if TAG in dispatch_strs:
         test_tag(session=session, tag=tag)
-    if CHANGELOG in dispatch_strs:
-        test_changelog(session=session)
 
 
 # @nox.session(python=TEMPLATE_PYTHONS[0])
