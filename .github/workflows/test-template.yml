@@ -4,8 +4,9 @@ on:
   push:
   pull_request:
     branches: [master]
+  # also run periodically (twice a month)
   schedule:
-    - cron: "41 7 * * 5"
+    - cron: "41 7 10,25 * *"
 
 jobs:
   test:
