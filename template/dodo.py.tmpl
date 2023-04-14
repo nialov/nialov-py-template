@@ -201,31 +201,7 @@ def task_apidocs():
     """
     Make apidoc documentation.
     """
-    command = "nox --session apidocs"
-    return {
-        ACTIONS: [command],
-        FILE_DEP: [
-            *PYTHON_ALL_FILES,
-            *DOCS_FILES,
-            DOCS_REQUIREMENTS_PATH,
-            NOXFILE_PATH,
-            # DODO_PATH,
-        ],
-        TASK_DEP: [
-            resolve_task_name(task_pre_commit),
-            # resolve_task_name(task_update_version),
-            resolve_task_name(task_lint),
-        ],
-        TARGETS: [DOCS_APIDOC_PATH],
-        UP_TO_DATE: [config_changed(dict(command=command))],
-    }
-
-
-def task_apidocs():
-    """
-    Make apidoc documentation.
-    """
-    command = "nox --session apidocs"
+    command = "nox --session docs -- api_docs"
     return {
         ACTIONS: [command],
         FILE_DEP: [
@@ -403,7 +379,6 @@ def use_tag(tag: str):
         # Collect new lines
         new_lines = []
         for line in path.read_text(UTF8).splitlines():
-
             # Substitute lines with new tag if they match pattern
             substituted = re.sub(VERSION_PATTERN, r"\g<1>" + tag + r'"', line)
 
