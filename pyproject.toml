@@ -2,6 +2,7 @@
 name = "nialov-py-template"
 version = "0.0.0"
 description = "Python copier template"
+homepage = "https://github.com/nialov/nialov-py-template"
 authors = ["nialov <nikolasovaskainen@gmail.com>"]
 
 [tool.poetry.dependencies]
