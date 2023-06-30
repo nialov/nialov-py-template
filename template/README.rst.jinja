@@ -59,7 +59,7 @@ Development
 
 -  For general contributing guidelines, see `CONTRIBUTING.rst </CONTRIBUTING>`__
 
-Development dependencies for ``[[ package ]]`` include:
+Development dependencies for ``{{ package }}`` include:
 
 -  ``poetry``
 
@@ -157,16 +157,16 @@ Big thanks to all maintainers of the above packages!
 License
 ~~~~~~~
 
-Copyright © [[ year ]], [[ full_name ]].
+Copyright © {{ year }}, {{ full_name }}.
 
 -----
 
-[% set package_with_dash = package.replace('_', '-') %]
-.. |Documentation Status| image:: https://readthedocs.org/projects/[[ package_with_dash ]]/badge/?version=latest
-   :target: https://[[ package_with_dash ]].readthedocs.io/en/latest/?badge=latest
-.. |PyPI Status| image:: https://img.shields.io/pypi/v/[[ package_with_dash ]].svg
-   :target: https://pypi.python.org/pypi/[[ package_with_dash ]]
-.. |CI Test| image:: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/workflows/CI/badge.svg
-   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/actions/workflows/main.yaml?query=branch%3Amaster
-.. |Coverage| image:: https://raw.githubusercontent.com/[[ github_account ]]/[[ package_with_dash ]]/master/docs_src/imgs/coverage.svg
-   :target: https://github.com/[[ github_account ]]/[[ package_with_dash ]]/blob/master/docs_src/imgs/coverage.svg
+{% set package_with_dash = package.replace('_', '-') %}
+.. |Documentation Status| image:: https://readthedocs.org/projects/{{ package_with_dash }}/badge/?version=latest
+   :target: https://{{ package_with_dash }}.readthedocs.io/en/latest/?badge=latest
+.. |PyPI Status| image:: https://img.shields.io/pypi/v/{{ package_with_dash }}.svg
+   :target: https://pypi.python.org/pypi/{{ package_with_dash }}
+.. |CI Test| image:: https://github.com/{{ github_account }}/{{ package_with_dash }}/workflows/CI/badge.svg
+   :target: https://github.com/{{ github_account }}/{{ package_with_dash }}/actions/workflows/main.yaml?query=branch%3Amaster
+.. |Coverage| image:: https://raw.githubusercontent.com/{{ github_account }}/{{ package_with_dash }}/master/docs_src/imgs/coverage.svg
+   :target: https://github.com/{{ github_account }}/{{ package_with_dash }}/blob/master/docs_src/imgs/coverage.svg

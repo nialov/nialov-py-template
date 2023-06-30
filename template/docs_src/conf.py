@@ -15,21 +15,22 @@ Configuration file for Sphinx.
 #
 import os
 import sys
-from importlib import import_module
+
+# from importlib import import_module
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("."))
 
 # -- Project information -----------------------------------------------------
 
-project = "[[ package|replace('_', '-') ]]"
-copyright = "[[ year ]], [[ full_name ]]"
-author = "[[ full_name ]]"
+project = "{{ package|replace('_', '-') }}"
+copyright = "{{ year }}, {{ full_name }}"
+author = "{{ full_name }}"
 
 # The full version, including alpha/beta/rc tags
-imported_package = import_module("[[ package ]]")  # noqa
+# imported_package = import_module("{{ package }}")  # noqa
 
-release = imported_package.__version__  # type: ignore
+# version = os.environ["SPHINX_PACKAGE_VERSION"].get()  # type: ignore
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,9 +38,7 @@ release = imported_package.__version__  # type: ignore
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx_autodoc_typehints",
-    "sphinx_gallery.gen_gallery",
     "sphinx_rtd_theme",
-    "nbsphinx",
 ]
 
 # Add .md markdown files as sources.
@@ -47,12 +46,6 @@ source_suffix = {
     ".rst": "restructuredtext",
 }
 master_doc = "index"
-
-# Sphinx-gallery config
-sphinx_gallery_conf = {
-    "examples_dirs": "../examples",  # path to your example scripts
-    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
-}
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom

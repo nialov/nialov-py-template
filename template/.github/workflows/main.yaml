@@ -1,0 +1,79 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  nix:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@v2
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Check with nix
+        run: |
+          nix flake check
+  poetry:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@v2
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Test with poetry on Python ${{ matrix.python-version }}
+        run: |
+          nix run .#poetry-run -- ${{ matrix.python-version }} pytest
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [nix, poetry]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@v2
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Build package with poetry
+        run: |
+          nix develop -c poetry check
+          nix develop -c poetry build
+
+      - name: Check that version in pyproject.toml is equivalent to tag
+        if: >
+          github.event_name == 'push'
+          && startsWith(github.ref, 'refs/tags')
+        run: |
+          nix run .#sync-git-tag-with-poetry
+          git diff --exit-code
+
+      - name: Publish distribution 📦 to PyPI on tagged commit pushes
+        # Publish to PyPI on tagged commit pushes on master
+        if: >
+          github.event_name == 'push'
+          && startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@v1.8.7
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
+
+      - name: Create incremental changelog
+        run: >
+          sed -n '2,/Release Changelog/p' CHANGELOG.md | head -n -4
+          > RELEASE_CHANGELOG.md
+
+      - name: Echo RELEASE_CHANGELOG.md
+        run: cat RELEASE_CHANGELOG.md
+
+      - name: Publish release on GitHub
+        if: >
+          github.event_name == 'push'
+          && startsWith(github.ref, 'refs/tags')
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: RELEASE_CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

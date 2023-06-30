@@ -11,3 +11,4 @@ dev/
 .esri.gz
 .direnv
 .pre-commit-cache/
+/.pre-commit-config.yaml

@@ -11,6 +11,7 @@ dev/
 .esri.gz
 *.html
 *.pickle
+result
 
 # We do not want to include requirements.txt
 # It is merely for backwards compatible pip installs
@@ -163,3 +164,6 @@ cython_debug/
 
 # direnv rc. it is created by nix develop
 .envrc
+.pre-commit-cache/
+/build
+/.pre-commit-config.yaml
