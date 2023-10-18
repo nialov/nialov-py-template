@@ -58,8 +58,7 @@
                 cp -r ${renderedTemplate} "$tmpdir"
 
                 cd "$tmpdir"
-                nix build .#devShells.x86_64-linux.default --no-link
-                nix build .#docs --no-link
+                nix build .#devShells.x86_64-linux.default --no-link --no-write-lock-file
               '';
           };
           render-template = let

@@ -2,7 +2,7 @@
   description = "nix declared development environment";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nix-extra = {
       url = "github:nialov/nix-extra";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,13 +12,14 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
-    flake-utils.lib.eachSystem [ flake-utils.lib.system.x86_64-linux ] (system:
+    let inherit (nixpkgs) lib;
+    in lib.recursiveUpdate
+    (flake-utils.lib.eachSystem [ flake-utils.lib.system.x86_64-linux ] (system:
       let
         # Initialize nixpkgs for system
         pkgs = import nixpkgs {
           inherit system;
-          overlays =
-            [ self.overlays.default inputs.nix-extra.overlays.default ];
+          overlays = [ self.overlays.default ];
         };
 
         devShellPackages = with pkgs; [
@@ -32,15 +33,16 @@
         ];
 
       in {
-        checks = {
+        checks = lib.recursiveUpdate {
           preCommitCheck = inputs.pre-commit-hooks.lib.${system}.run
             (import ././pre-commit.nix { inherit pkgs; });
 
-        };
+        } self.packages."${system}";
         packages = {
           inherit (pkgs)
             sync-git-tag-with-poetry resolve-version update-changelog
             pre-release poetry-run docs;
+          "{{ package }}" = pkgs.python3Packages."{{ package }}";
         };
         devShells = {
           default = pkgs.mkShell {
@@ -49,90 +51,21 @@
           };
           # poetry = self.packages."${system}".poetryEnv.env;
         };
-      }) // {
-        overlays.default = final: prev: {
-          pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-            (python-final: _:
-              {
-                # "{{ package }}" = python-final.callPackage ./default.nix { };
+      })) {
+
+        overlays.default = inputs.nixpkgs.lib.composeManyExtensions [
+          inputs.nix-extra.overlays.utils
+          (final: prev: {
+            pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+              (python-final: _: {
+                "{{ package }}" = python-final.callPackage ./default.nix { };
               })
-          ];
-
-          # poetryEnv = prev.poetry2nix.mkPoetryEnv {
-          #   projectDir = ./.;
-          #   # editablePackageSources = { doit_ext = ./doit_ext; };
-          # };
-          docs = let
-            sphinxEnv = final.python3.withPackages
-              (p: with p; [ sphinx sphinx-autodoc-typehints sphinx-rtd-theme ]);
-          in prev.runCommand "docs" {
-            nativeBuildInputs = [ final.resolve-version ];
-          } ''
-            set -x
-            tmpdir=$(mktemp -d)
-            ln -s ${./. + "/{{ package }}"} $tmpdir/{{ package }}
-            ln -s ${./README.rst} $tmpdir/README.rst
-            cp -r ${./docs_src} $tmpdir/docs_src
-            chmod -R 777 $tmpdir/docs_src
-            cd $tmpdir
-            ${sphinxEnv}/bin/sphinx-apidoc -o docs_src/apidoc -f {{ package }} -e -f
-            ${sphinxEnv}/bin/sphinx-build -b html docs_src/ $out
-          '';
-          sync-git-tag-with-poetry = final.writeShellApplication {
-            name = "sync-git-tag-with-poetry";
-            runtimeInputs = with final; [ poetry git resolve-version ];
-            text = ''
-              version="$(resolve-version)"
-              poetry version "$version"
-            '';
-          };
-          resolve-version = prev.writeShellApplication {
-            name = "resolve-version";
-            runtimeInputs = with prev; [ git ];
-            text = ''
-              version="$(git tag --sort=-creatordate | head -n 1 | sed 's/v\(.*\)/\1/')"
-              echo "$version"
-            '';
-          };
-          update-changelog = prev.writeShellApplication {
-            name = "update-changelog";
-            runtimeInputs = with prev; [ clog-cli ripgrep pandoc ];
-            text = ''
-              homepage="$(rg 'homepage =' pyproject.toml | sed 's/.*"\(.*\)"/\1/')"
-              version="$(git tag --sort=-creatordate | head -n 1 | sed 's/v\(.*\)/\1/')"
-              clog --repository "$homepage" --subtitle "Release Changelog $version" "$@"
-            '';
-          };
-          pre-release = final.writeShellApplication {
-            name = "pre-release";
-            runtimeInputs = with final; [
-              update-changelog
-              sync-git-tag-with-poetry
             ];
-            text = ''
-              sync-git-tag-with-poetry
-              update-changelog --changelog CHANGELOG.md
-              pandoc CHANGELOG.md --from markdown --to markdown --output CHANGELOG.md
-            '';
-
-          };
-          poetry-run = prev.writeShellApplication {
-            name = "poetry-run";
-            runtimeInputs =
-              self.devShells."${prev.system}".default.nativeBuildInputs;
-            text = ''
-              poetry check
-              poetry env use "$1"
-              shift
-              poetry env info
-              poetry lock --check
-              poetry install
-              poetry run "$@"
-            '';
-
-          };
-
-        };
+            "poetry-run-{{ package }}" = final.poetry-run.override {
+              pythons = with prev; [ python39 python310 python311 ];
+            };
+          })
+        ];
       };
 
 }

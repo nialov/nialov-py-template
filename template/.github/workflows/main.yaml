@@ -1,7 +1,5 @@
 on:
   push:
-    branches: [master]
-  pull_request:
 
 jobs:
   nix:
@@ -9,9 +7,10 @@ jobs:
       matrix:
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
-      - uses: DeterminateSystems/nix-installer-action@v2
+      - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Check with nix
         run: |
@@ -22,6 +21,7 @@ jobs:
         platform: [ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11"]
     runs-on: ${{ matrix.platform }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
       - uses: DeterminateSystems/nix-installer-action@v2

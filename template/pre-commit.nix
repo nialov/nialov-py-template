@@ -54,6 +54,19 @@
       description = "Check documentation with rstcheck";
       entry = "${pkgs.rstcheck}/bin/rstcheck";
       files = "\\.(rst)$";
+      raw = { args = [ "-r" "docs_src" "--ignore-directives" "automodule" ]; };
+    };
+    cogapp = {
+      enable = false;
+      name = "cogapp";
+      description = "Execute Python snippets in text files";
+      entry = "${pkgs.python3Packages.cogapp}/bin/cog";
+      files = "(README.rst|docs_src/index.rst)";
+      pass_filenames = false;
+      raw = {
+        args = [ "-e" "-r" "--check" "-c" "docs_src/index.rst" ];
+        always_run = true;
+      };
     };
     # mypy-in-env = {
     #   enable = true;
