@@ -41,7 +41,7 @@
         packages = {
           inherit (pkgs)
             sync-git-tag-with-poetry resolve-version update-changelog
-            pre-release poetry-run docs;
+            pre-release poetry-run;
           "{{ package }}" = pkgs.python3Packages."{{ package }}";
         };
         devShells = {
